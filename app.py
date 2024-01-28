@@ -4,9 +4,8 @@ from skfuzzy import control as ctrl
 import streamlit as st
 import pydeck as pdk
 
+
 # Function to create the fuzzy system
-
-
 def create_fuzzy_system():
     # Create input variables
     rainfall = ctrl.Antecedent(np.arange(0, 101, 1), 'rainfall')
@@ -100,9 +99,8 @@ def calculate_landslide_risk(fuzzy_system, inputs):
     landslide_sim.compute()
     return landslide_sim.output['landslide_risk']
 
+
 # Function to map risk to category
-
-
 def map_risk_to_category(landslide_risk_result):
     if landslide_risk_result <= 30:
         return "Low Risk"
@@ -159,9 +157,11 @@ def display_landslide_risk_interface():
         landslide_risk_result = calculate_landslide_risk(fuzzy_system, inputs)
         risk_category = map_risk_to_category(landslide_risk_result)
 
-        # Display the risk category
-        st.success(
-            f"Landslide Risk: {landslide_risk_result:.2f}% - Category: {risk_category}")
+        # Display the risk category with enhanced styling
+        category_color = 'red' if risk_category == 'High Risk' else 'orange' if risk_category == 'Moderate Risk' else 'green'
+        styled_message = f'<div style="background-color: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid {category_color}; color: {category_color}; font-size: 18px;">Landslide Risk: {landslide_risk_result:.2f}% - Category: {risk_category}</div>'
+        st.markdown(styled_message, unsafe_allow_html=True)
+
 
         # Display Map with PyDeck Scatter Plot
         st.header("GIS of Penang Hill Biosphere Reserve")
@@ -203,9 +203,8 @@ def display_landslide_risk_interface():
             # Display the PyDeck Chart
             st.pydeck_chart(r)
 
-    # Main function
 
-
+# Main function
 def main():
     st.set_page_config(
         page_title="Environment Assessment Portal", page_icon="🌍")
