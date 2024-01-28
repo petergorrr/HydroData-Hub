@@ -6,6 +6,7 @@ import pydeck as pdk
 
 # Function to create the fuzzy system
 
+
 def create_fuzzy_system():
     # Create input variables
     rainfall = ctrl.Antecedent(np.arange(0, 101, 1), 'rainfall')
@@ -100,6 +101,8 @@ def calculate_landslide_risk(fuzzy_system, inputs):
     return landslide_sim.output['landslide_risk']
 
 # Function to map risk to category
+
+
 def map_risk_to_category(landslide_risk_result):
     if landslide_risk_result <= 30:
         return "Low Risk"
@@ -161,10 +164,11 @@ def display_landslide_risk_interface():
             f"Landslide Risk: {landslide_risk_result:.2f}% - Category: {risk_category}")
 
         # Display Map with PyDeck Scatter Plot
-        st.header("PyDeck Scatter Plot")
-        with st.expander("PyDeck Scatter Plot", expanded=True):
+        st.header("GIS of Penang Hill Biosphere Reserve")
+        with st.expander("Landslide hazard Map", expanded=True):
             # Create PyDeck Scatter Plot data
-            data = [{"latitude": latitude, "longitude": longitude, "risk": landslide_risk_result}]
+            data = [{"latitude": latitude, "longitude": longitude,
+                     "risk": landslide_risk_result}]
 
             # Create PyDeck Scatter Plot
             scatter_layer = pdk.Layer(
@@ -173,6 +177,7 @@ def display_landslide_risk_interface():
                 get_position="[longitude, latitude]",
                 get_radius=200,
                 get_fill_color="[255, risk, 0]",
+
                 pickable=True,
                 opacity=0.8,
                 stroked=True,
@@ -198,7 +203,9 @@ def display_landslide_risk_interface():
             # Display the PyDeck Chart
             st.pydeck_chart(r)
 
-# Main function
+    # Main function
+
+
 def main():
     st.set_page_config(
         page_title="Environment Assessment Portal", page_icon="🌍")
@@ -208,12 +215,14 @@ def main():
 
     # Navigation bar
     st.sidebar.title("Navigation")
+
     selected_section = st.sidebar.radio(
         "", ["Landslide Risk Assessment"])
 
     # Display selected section
     if selected_section == "Landslide Risk Assessment":
         display_landslide_risk_interface()
+
 
 if __name__ == "__main__":
     main()
