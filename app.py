@@ -4,7 +4,6 @@ from skfuzzy import control as ctrl
 import streamlit as st
 import folium
 
-
 # Function to create the fuzzy system
 
 
@@ -14,6 +13,8 @@ def create_fuzzy_system():
     soil_saturation = ctrl.Antecedent(np.arange(0, 101, 1), 'soil_saturation')
     terrain_steepness = ctrl.Antecedent(
         np.arange(0, 101, 1), 'terrain_steepness')
+    occurrence_before = ctrl.Antecedent(
+        np.arange(0, 101, 1), 'occurrence_before')
 
     # Create output variable
     landslide_risk = ctrl.Consequent(np.arange(0, 101, 1), 'landslide_risk')
@@ -36,6 +37,11 @@ def create_fuzzy_system():
     terrain_steepness['steep'] = fuzz.trimf(
         terrain_steepness.universe, [50, 100, 100])
 
+    occurrence_before['no'] = fuzz.trimf(
+        occurrence_before.universe, [0, 0, 50])
+    occurrence_before['yes'] = fuzz.trimf(
+        occurrence_before.universe, [50, 100, 100])
+
     landslide_risk['low'] = fuzz.trimf(landslide_risk.universe, [0, 0, 50])
     landslide_risk['moderate'] = fuzz.trimf(
         landslide_risk.universe, [0, 50, 100])
@@ -43,26 +49,42 @@ def create_fuzzy_system():
         landslide_risk.universe, [50, 100, 100])
 
     # Define rules
-    rule1 = ctrl.Rule(antecedent=((rainfall['low'] & soil_saturation['low'])),
-                      consequent=landslide_risk['low'])
+    rule1 = ctrl.Rule(
+        antecedent=(
+            (rainfall['low'] & soil_saturation['low'] & occurrence_before['no'])),
+        consequent=landslide_risk['low']
+    )
 
-    rule2 = ctrl.Rule(antecedent=((rainfall['high'] | soil_saturation['high'] | terrain_steepness['steep'])),
-                      consequent=landslide_risk['high'])
+    rule2 = ctrl.Rule(
+        antecedent=((rainfall['high'] | soil_saturation['high'] | terrain_steepness['steep'] |
+                     occurrence_before['yes'])),
+        consequent=landslide_risk['high']
+    )
 
-    rule3 = ctrl.Rule(antecedent=((rainfall['moderate'] & soil_saturation['medium'])),
-                      consequent=landslide_risk['moderate'])
+    rule3 = ctrl.Rule(
+        antecedent=((rainfall['moderate'] & soil_saturation['medium'])),
+        consequent=landslide_risk['moderate']
+    )
 
-    rule4 = ctrl.Rule(antecedent=(terrain_steepness['gentle']),
-                      consequent=landslide_risk['low'])
+    rule4 = ctrl.Rule(
+        antecedent=(terrain_steepness['gentle']),
+        consequent=landslide_risk['low']
+    )
 
-    rule5 = ctrl.Rule(antecedent=((rainfall['high'] & terrain_steepness['moderate'])),
-                      consequent=landslide_risk['moderate'])
+    rule5 = ctrl.Rule(
+        antecedent=((rainfall['high'] & terrain_steepness['moderate'])),
+        consequent=landslide_risk['moderate']
+    )
 
-    rule6 = ctrl.Rule(antecedent=((soil_saturation['high'] & terrain_steepness['gentle'])),
-                      consequent=landslide_risk['moderate'])
+    rule6 = ctrl.Rule(
+        antecedent=((soil_saturation['high'] & terrain_steepness['gentle'])),
+        consequent=landslide_risk['moderate']
+    )
 
-    rule7 = ctrl.Rule(antecedent=((rainfall['moderate'] & terrain_steepness['steep'])),
-                      consequent=landslide_risk['high'])
+    rule7 = ctrl.Rule(
+        antecedent=((rainfall['moderate'] & terrain_steepness['steep'])),
+        consequent=landslide_risk['high']
+    )
 
     # Create the control system
     return ctrl.ControlSystem(rules=[rule1, rule2, rule3, rule4, rule5, rule6, rule7])
@@ -75,6 +97,7 @@ def calculate_landslide_risk(fuzzy_system, inputs):
     landslide_sim.input['rainfall'] = inputs['rainfall']
     landslide_sim.input['soil_saturation'] = inputs['soil_saturation']
     landslide_sim.input['terrain_steepness'] = inputs['terrain_steepness']
+    landslide_sim.input['occurrence_before'] = inputs['occurrence_before']
     landslide_sim.compute()
     return landslide_sim.output['landslide_risk']
 
@@ -92,7 +115,6 @@ def map_risk_to_category(landslide_risk_result):
 # Function to display landslide risk assessment interface
 
 
-# Function to display landslide risk assessment interface
 def display_landslide_risk_interface():
     st.title("Landslide Risk Assessment")
 
@@ -118,11 +140,28 @@ def display_landslide_risk_interface():
             "Select Soil Saturation (0-100):", 0, 100, 50)
         steepness_value = st.slider(
             "Select Terrain Steepness (0-100):", 0, 100, 50)
+        occurrence_before_value = st.radio(
+            "Was there an Occurrence Before?", ['No', 'Yes'])
+
+    # Convert the occurrence_before_value to a numerical value
+    occurrence_mapping = {'No': 25, 'Yes': 75}
+    occurrence_before_num = occurrence_mapping[occurrence_before_value]
 
     inputs = {
         'rainfall': float(rainfall_value),
         'soil_saturation': float(saturation_value),
-        'terrain_steepness': float(steepness_value)
+        'terrain_steepness': float(steepness_value),
+        'occurrence_before': float(occurrence_before_num)
+    }
+    # Convert the occurrence_before_value to a numerical value
+    occurrence_mapping = {'No': 0, 'Yes': 100}
+    occurrence_before_num = occurrence_mapping[occurrence_before_value]
+
+    inputs = {
+        'rainfall': float(rainfall_value),
+        'soil_saturation': float(saturation_value),
+        'terrain_steepness': float(steepness_value),
+        'occurrence_before': float(occurrence_before_num)
     }
 
     # Create and calculate fuzzy system
@@ -154,8 +193,9 @@ def display_landslide_risk_interface():
             # Display Map
             st.write(m)
 
-
 # Main function
+
+
 def main():
     st.set_page_config(
         page_title="Environment Assessment Portal", page_icon="🌍")
