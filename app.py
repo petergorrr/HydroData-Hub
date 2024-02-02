@@ -216,6 +216,8 @@ def display_landslide_risk_interface():
             st.pydeck_chart(r)
 
 # Main function
+
+
 def main():
     st.set_page_config(
         page_title="Environment Assessment Portal", page_icon="🌍")
@@ -231,6 +233,7 @@ def main():
     # Display selected section
     if selected_section == "Landslide Risk Assessment System":
         display_landslide_risk_interface()
+
 
 if __name__ == "__main__":
     main()
