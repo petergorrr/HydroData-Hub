@@ -223,7 +223,7 @@ def main():
         page_title="Environment Assessment Portal", page_icon="🌍")
 
     # Display welcome message
-    st.title("Welcome to the Environment Assessment Portal")
+    st.title("Welcome to HydroDataHub")
 
     # Navigation bar
     st.sidebar.title("Navigation")
