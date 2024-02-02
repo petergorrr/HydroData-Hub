@@ -112,7 +112,7 @@ def map_risk_to_category(landslide_risk_result):
 
 # Function to display landslide risk assessment interface
 def display_landslide_risk_interface():
-    st.title("Landslide Risk Assessment")
+    st.title("Landslide Risk Assessment System")
 
     # Sidebar for additional information
     st.sidebar.title("Environment Assessment Portal")
@@ -120,6 +120,20 @@ def display_landslide_risk_interface():
     st.sidebar.info(
         "This app uses a fuzzy logic system to assess landslide risk based on input parameters. "
         "Adjust the parameters and click 'Calculate Risk' to see the results on the map."
+    )
+
+    # Add a section to explain the algorithm/rules
+    st.header("Algorithm Rules")
+    st.markdown(
+        """
+        - **Rule 1:** If rainfall is low, soil saturation is low, and no occurrence before, then the landslide risk is low.
+        - **Rule 2:** If any of the following conditions are met - high rainfall, high soil saturation, steep terrain, or an occurrence before - the landslide risk is high.
+        - **Rule 3:** If rainfall is moderate and soil saturation is medium, then the landslide risk is moderate.
+        - **Rule 4:** If the terrain is gentle, then the landslide risk is low.
+        - **Rule 5:** If both rainfall and terrain steepness are high, the landslide risk is moderate.
+        - **Rule 6:** If soil saturation is high and terrain steepness is gentle, the landslide risk is moderate.
+        - **Rule 7:** If rainfall is moderate and terrain steepness is steep, the landslide risk is high.
+        """
     )
 
     # User Input: Latitude and Longitude
@@ -162,7 +176,6 @@ def display_landslide_risk_interface():
         styled_message = f'<div style="background-color: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid {category_color}; color: {category_color}; font-size: 18px;">Landslide Risk: {landslide_risk_result:.2f}% - Category: {risk_category}</div>'
         st.markdown(styled_message, unsafe_allow_html=True)
 
-
         # Display Map with PyDeck Scatter Plot
         st.header("GIS of Penang Hill Biosphere Reserve")
         with st.expander("Landslide hazard Map", expanded=True):
@@ -177,7 +190,6 @@ def display_landslide_risk_interface():
                 get_position="[longitude, latitude]",
                 get_radius=200,
                 get_fill_color="[255, risk, 0]",
-
                 pickable=True,
                 opacity=0.8,
                 stroked=True,
@@ -203,7 +215,6 @@ def display_landslide_risk_interface():
             # Display the PyDeck Chart
             st.pydeck_chart(r)
 
-
 # Main function
 def main():
     st.set_page_config(
@@ -214,14 +225,12 @@ def main():
 
     # Navigation bar
     st.sidebar.title("Navigation")
-
     selected_section = st.sidebar.radio(
-        "", ["Landslide Risk Assessment"])
+        "", ["Landslide Risk Assessment System"])
 
     # Display selected section
-    if selected_section == "Landslide Risk Assessment":
+    if selected_section == "Landslide Risk Assessment System":
         display_landslide_risk_interface()
-
 
 if __name__ == "__main__":
     main()
