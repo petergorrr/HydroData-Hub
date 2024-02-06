@@ -5,3 +5,4 @@ plotly==5.18.0
 scikit_fuzzy==0.4.2
 streamlit==1.30.0
 matplotlib==3.8.1  
+geopandas==0.14.3
