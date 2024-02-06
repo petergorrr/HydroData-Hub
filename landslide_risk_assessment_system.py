@@ -103,7 +103,6 @@ def calculate_landslide_risk(fuzzy_system, inputs):
     return landslide_sim.output['landslide_risk']
 
 
-
 def map_risk_to_category(landslide_risk_result):
     if landslide_risk_result <= 30:
         return "Safe"
@@ -162,7 +161,6 @@ def display_landslide_risk_interface():
             "Adjust the parameters and click 'Calculate Risk' to see the results on the map."
         )
 
-
     # Algorithm Flow Section
     st.header("Algorithm Rules")
 
@@ -220,9 +218,6 @@ def display_landslide_risk_interface():
         unsafe_allow_html=True
     )
 
-
-
-
     # User Input: Latitude and Longitude
     st.header("Location Coordinates")
     latitude_longitude = st.text_input(
@@ -272,7 +267,7 @@ def display_landslide_risk_interface():
         # Define the legend for risk levels
         legend = """
             <div style="background-color: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-size: 16px;">
-                <h3 style="margin-bottom: 10px;">Risk Category</h3>
+                <h3 style="margin-bottom: 10px;">Risk Level</h3>
                 <div style="display: flex; align-items: center; margin-bottom: 5px;">
                     <span style="color: green; font-size: 24px; margin-right: 10px;">&#9679;</span>
                     <span style="margin-right: 10px;">Safe</span>
@@ -306,7 +301,7 @@ def display_landslide_risk_interface():
         combined_component = f"""
             <div>
                 <div style="background-color: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid {category_color}; color: {category_color}; font-size: 18px; margin-bottom: 20px;text-align:center">
-                    Landslide Risk: {landslide_risk_result:.2f}% - Risk Category: {risk_category}
+                    Landslide Risk: {landslide_risk_result:.2f}% - Risk Level: {risk_category}
                 </div>
                 {combined_legend_and_breakdown}
             </div>
