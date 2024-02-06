@@ -1,8 +1,9 @@
+import streamlit as st
 import numpy as np
+import pydeck as pdk
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
-import streamlit as st
-import pydeck as pdk
+
 
 
 # Function to create the fuzzy system
@@ -112,15 +113,14 @@ def map_risk_to_category(landslide_risk_result):
 
 # Function to display landslide risk assessment interface
 def display_landslide_risk_interface():
-    st.title("Landslide Risk Assessment System")
 
-    # Sidebar for additional information
-    st.sidebar.title("Environment Assessment Portal")
-    st.sidebar.image("images/landslide.jpg", use_column_width=True)
-    st.sidebar.info(
-        "This app uses a fuzzy logic system to assess landslide risk based on input parameters. "
-        "Adjust the parameters and click 'Calculate Risk' to see the results on the map."
-    )
+    with st.sidebar:
+        st.title("Landslide Risk Assessment System")
+        st.image("images/landslide.jpg", use_column_width=True)
+        st.info(
+            "This app uses a fuzzy logic system to assess landslide risk based on input parameters. "
+            "Adjust the parameters and click 'Calculate Risk' to see the results on the map."
+        )
 
     # Add a section to explain the algorithm/rules
     st.header("Algorithm Rules")
@@ -144,7 +144,7 @@ def display_landslide_risk_interface():
 
     # User Input: Fuzzy Logic Variables
     st.header("Landslide Risk Parameters")
-    with st.expander("Input Parameters", expanded=True):
+    with st.expander("Input Standardised Parameters", expanded=True):
         rainfall_value = st.slider("Select Rainfall (0-100):", 0, 100, 50)
         saturation_value = st.slider(
             "Select Soil Saturation (0-100):", 0, 100, 50)
@@ -171,14 +171,23 @@ def display_landslide_risk_interface():
         landslide_risk_result = calculate_landslide_risk(fuzzy_system, inputs)
         risk_category = map_risk_to_category(landslide_risk_result)
 
-        # Display the risk category with enhanced styling
+        # Display the risk category with enhanced styling and additional information
         category_color = 'red' if risk_category == 'High Risk' else 'orange' if risk_category == 'Moderate Risk' else 'green'
-        styled_message = f'<div style="background-color: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid {category_color}; color: {category_color}; font-size: 18px;">Landslide Risk: {landslide_risk_result:.2f}% - Category: {risk_category}</div>'
+
+        # Add additional information based on the risk category
+        if risk_category == 'High Risk':
+            additional_info = "This area is at high risk of landslides. Please take necessary precautions."
+        elif risk_category == 'Moderate Risk':
+            additional_info = "This area has a moderate risk of landslides. Stay vigilant and monitor the surroundings."
+        else:
+            additional_info = "This area is in a safe zone with low risk of landslides. Enjoy the surroundings responsibly."
+
+        styled_message = f'<div style="background-color: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid {category_color}; color: {category_color}; font-size: 18px;">Landslide Risk: {landslide_risk_result:.2f}% - Category: {risk_category}<br>{additional_info}</div>'
         st.markdown(styled_message, unsafe_allow_html=True)
 
         # Display Map with PyDeck Scatter Plot
         st.header("GIS of Penang Hill Biosphere Reserve")
-        with st.expander("Landslide hazard Map", expanded=True):
+        with st.expander("Landslide Hazard Map", expanded=True):
             # Create PyDeck Scatter Plot data
             data = [{"latitude": latitude, "longitude": longitude,
                      "risk": landslide_risk_result}]
@@ -214,26 +223,3 @@ def display_landslide_risk_interface():
 
             # Display the PyDeck Chart
             st.pydeck_chart(r)
-
-# Main function
-
-
-def main():
-    st.set_page_config(
-        page_title="Environment Assessment Portal", page_icon="🌍")
-
-    # Display welcome message
-    st.title("Welcome to HydroDataHub💧")
-
-    # Navigation bar
-    st.sidebar.title("Navigation")
-    selected_section = st.sidebar.radio(
-        "", ["Landslide Risk Assessment System"])
-
-    # Display selected section
-    if selected_section == "Landslide Risk Assessment System":
-        display_landslide_risk_interface()
-
-
-if __name__ == "__main__":
-    main()
