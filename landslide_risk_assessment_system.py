@@ -162,19 +162,66 @@ def display_landslide_risk_interface():
             "Adjust the parameters and click 'Calculate Risk' to see the results on the map."
         )
 
-    # Add a section to explain the algorithm/rules
+
+    # Algorithm Flow Section
     st.header("Algorithm Rules")
+
+    # Algorithm Overview
     st.markdown(
         """
-        - **Rule 1:** If rainfall is low, soil saturation is low, and no occurrence before, then the landslide risk is low.
-        - **Rule 2:** If any of the following conditions are met - high rainfall, high soil saturation, steep terrain, or an occurrence before - the landslide risk is high.
-        - **Rule 3:** If rainfall is moderate and soil saturation is medium, then the landslide risk is moderate.
-        - **Rule 4:** If the terrain is gentle, then the landslide risk is low.
-        - **Rule 5:** If both rainfall and terrain steepness are high, the landslide risk is moderate.
-        - **Rule 6:** If soil saturation is high and terrain steepness is gentle, the landslide risk is moderate.
-        - **Rule 7:** If rainfall is moderate and terrain steepness is steep, the landslide risk is high.
-        """
+        <div style="background-color:#FA9203; border-radius: 10px; padding: 20px;">
+            <h3 style="color: #333333; font-size: 20px; margin-bottom: 10px;">Algorithm Overview🖥️</h3>
+            <p style="color: #000000; font-size: 16px;">The landslide risk assessment is based on several input parameters including rainfall, soil saturation, and terrain steepness.</p>
+            <p style="color: #000000; font-size: 16px;">Here are the rules governing the assessment:</p>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
+
+    # Rainfall-related Rules
+    st.markdown(
+        """
+        <div style="background-color: lightblue; border-radius: 5px; padding: 15px; margin-bottom: 10px;">
+            <h4 style="color: steelblue; font-size: 18px; margin-bottom: 10px;"><span>&#x1F327;</span> Rainfall-related Rules:</h4>
+            <ul style="list-style-type: none; padding-left: 20px; color: #333333; font-size: 16px;">
+                <li><strong>Rule 1:</strong> If rainfall is low and no occurrence before, then the landslide risk is low.</li>
+                <li><strong>Rule 2:</strong> If rainfall is high, the landslide risk is high.</li>
+            </ul>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Soil Saturation-related Rules
+    st.markdown(
+        """
+        <div style="background-color: lightgreen; border-radius: 5px; padding: 15px; margin-bottom: 10px;">
+            <h4 style="color: #1c7527; font-size: 18px; margin-bottom: 10px;"><span>🌱</span> Soil Saturation-related Rules:</h4>
+            <ul style="list-style-type: none; padding-left: 20px; color: #666666; font-size: 16px;">
+                <li><strong>Rule 3:</strong> If soil saturation is low and no occurrence before, then the landslide risk is low.</li>
+                <li><strong>Rule 4:</strong> If soil saturation is high, the landslide risk is high.</li>
+            </ul>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Terrain Steepness-related Rules
+    st.markdown(
+        """
+        <div style="background-color: #fde0e0; border-radius: 5px; padding: 15px; margin-bottom: 10px;">
+            <h4 style="color: #af2e2e; font-size: 18px; margin-bottom: 10px;"><span>🐌</span> Terrain Steepness-related Rules:</h4>
+            <ul style="list-style-type: none; padding-left: 20px; color: #333333; font-size: 16px;">
+                <li><strong>Rule 5:</strong> If terrain steepness is gentle, the landslide risk is low.</li>
+                <li><strong>Rule 6:</strong> If terrain steepness is steep, the landslide risk is high.</li>
+            </ul>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+
 
     # User Input: Latitude and Longitude
     st.header("Location Coordinates")
