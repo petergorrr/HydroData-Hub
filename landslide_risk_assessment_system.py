@@ -5,8 +5,6 @@ import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
 
-
-# Function to create the fuzzy system
 def create_fuzzy_system():
     # Create input variables
     rainfall = ctrl.Antecedent(np.arange(0, 101, 1), 'rainfall')
@@ -20,16 +18,19 @@ def create_fuzzy_system():
     landslide_risk = ctrl.Consequent(np.arange(0, 101, 1), 'landslide_risk')
 
     # Define membership functions
+    # Membership functions for rainfall
     rainfall['low'] = fuzz.trimf(rainfall.universe, [0, 0, 50])
     rainfall['moderate'] = fuzz.trimf(rainfall.universe, [0, 50, 100])
     rainfall['high'] = fuzz.trimf(rainfall.universe, [50, 100, 100])
 
+    # Membership functions for soil saturation
     soil_saturation['low'] = fuzz.trimf(soil_saturation.universe, [0, 0, 50])
     soil_saturation['medium'] = fuzz.trimf(
         soil_saturation.universe, [0, 50, 100])
     soil_saturation['high'] = fuzz.trimf(
         soil_saturation.universe, [50, 100, 100])
 
+    # Membership functions for terrain steepness
     terrain_steepness['gentle'] = fuzz.trimf(
         terrain_steepness.universe, [0, 0, 50])
     terrain_steepness['moderate'] = fuzz.trimf(
@@ -37,11 +38,13 @@ def create_fuzzy_system():
     terrain_steepness['steep'] = fuzz.trimf(
         terrain_steepness.universe, [50, 100, 100])
 
+    # Membership functions for occurrence before
     occurrence_before['no'] = fuzz.trimf(
         occurrence_before.universe, [0, 0, 50])
     occurrence_before['yes'] = fuzz.trimf(
         occurrence_before.universe, [50, 100, 100])
 
+    # Membership functions for landslide risk
     landslide_risk['low'] = fuzz.trimf(landslide_risk.universe, [0, 0, 50])
     landslide_risk['moderate'] = fuzz.trimf(
         landslide_risk.universe, [0, 50, 100])
@@ -90,7 +93,6 @@ def create_fuzzy_system():
     return ctrl.ControlSystem(rules=[rule1, rule2, rule3, rule4, rule5, rule6, rule7])
 
 
-# Function to calculate landslide risk
 def calculate_landslide_risk(fuzzy_system, inputs):
     landslide_sim = ctrl.ControlSystemSimulation(fuzzy_system)
     landslide_sim.input['rainfall'] = inputs['rainfall']
@@ -101,17 +103,55 @@ def calculate_landslide_risk(fuzzy_system, inputs):
     return landslide_sim.output['landslide_risk']
 
 
-# Function to map risk to category
+
 def map_risk_to_category(landslide_risk_result):
     if landslide_risk_result <= 30:
-        return "Low Risk"
+        return "Safe"
     elif 30 < landslide_risk_result <= 70:
-        return "Moderate Risk"
+        return "Moderate"
     else:
-        return "High Risk"
+        return "High"
 
 
-# Function to display landslide risk assessment interface
+# Function to provide advice based on landslide risk level and input parameters
+def provide_advice(landslide_risk_level, inputs):
+    advice = ""
+    if landslide_risk_level == 'Safe':
+        if inputs['rainfall'] <= 30:
+            advice += "Rainfall is low. It's relatively safe, but keep an eye on any changes. "
+        elif 30 < inputs['rainfall'] <= 60:
+            advice += "Rainfall is moderate. Exercise caution and monitor for any signs of saturation. "
+        else:
+            advice += "Rainfall is high. Although the risk is low, be vigilant for any unusual activity. "
+
+        if inputs['soil_saturation'] <= 40:
+            advice += "Soil saturation is moderate. Stay alert for signs of instability. "
+        elif 40 < inputs['soil_saturation'] <= 70:
+            advice += "Soil saturation is high. Avoid steep slopes and areas prone to erosion. "
+        else:
+            advice += "Soil saturation is very high. Evacuate immediately to higher ground. "
+
+        if inputs['terrain_steepness'] <= 40:
+            advice += "Terrain is moderately steep. Continue to monitor for any changes. "
+        elif 40 < inputs['terrain_steepness'] <= 70:
+            advice += "Terrain is very steep. Exercise caution and avoid steep areas. "
+        else:
+            advice += "Terrain is extremely steep. Evacuate to high ground immediately. Do not return until it's safe. "
+    elif landslide_risk_level == 'Moderate':
+        if inputs['rainfall'] <= 30:
+            advice += "Rainfall is low, but soil saturation and terrain steepness pose moderate risk. "
+        elif 30 < inputs['rainfall'] <= 60:
+            advice += "Rainfall is moderate. Exercise caution due to moderate soil saturation and terrain steepness. "
+        else:
+            advice += "Rainfall is high. Be extremely cautious due to high soil saturation and steep terrain. "
+    elif landslide_risk_level == 'High':
+        advice += "High risk of landslide due to extreme conditions. Immediate evacuation is necessary. "
+    else:
+        advice = "Invalid risk level. Please input a valid risk level (Low Risk, Moderate Risk, High Risk)."
+
+    return advice
+
+
 def display_landslide_risk_interface():
 
     with st.sidebar:
@@ -144,7 +184,7 @@ def display_landslide_risk_interface():
 
     # User Input: Fuzzy Logic Variables
     st.header("Landslide Risk Parameters")
-    with st.expander("Input Standardised Parameters", expanded=True):
+    with st.expander("Standardised Parameters", expanded=True):
         rainfall_value = st.slider("Select Rainfall (0-100):", 0, 100, 50)
         saturation_value = st.slider(
             "Select Soil Saturation (0-100):", 0, 100, 50)
@@ -171,19 +211,66 @@ def display_landslide_risk_interface():
         landslide_risk_result = calculate_landslide_risk(fuzzy_system, inputs)
         risk_category = map_risk_to_category(landslide_risk_result)
 
-        # Display the risk category with enhanced styling and additional information
-        category_color = 'red' if risk_category == 'High Risk' else 'orange' if risk_category == 'Moderate Risk' else 'green'
-
-        # Add additional information based on the risk category
-        if risk_category == 'High Risk':
-            additional_info = "This area is at high risk of landslides. Please take necessary precautions."
-        elif risk_category == 'Moderate Risk':
-            additional_info = "This area has a moderate risk of landslides. Stay vigilant and monitor the surroundings."
+        # Determine the color based on the risk category
+        if risk_category == 'High':
+            category_color = 'red'
+        elif risk_category == 'Moderate':
+            category_color = 'orange'
         else:
-            additional_info = "This area is in a safe zone with low risk of landslides. Enjoy the surroundings responsibly."
+            category_color = 'green'
 
-        styled_message = f'<div style="background-color: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid {category_color}; color: {category_color}; font-size: 18px;">Landslide Risk: {landslide_risk_result:.2f}% - Category: {risk_category}<br>{additional_info}</div>'
-        st.markdown(styled_message, unsafe_allow_html=True)
+        # Provide advice based on the calculated risk level and input parameters
+        advice = provide_advice(risk_category, inputs)
+
+        # Define the legend for risk levels
+        legend = """
+            <div style="background-color: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-size: 16px;">
+                <h3 style="margin-bottom: 10px;">Risk Category</h3>
+                <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                    <span style="color: green; font-size: 24px; margin-right: 10px;">&#9679;</span>
+                    <span style="margin-right: 10px;">Safe</span>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                    <span style="color: orange; font-size: 24px; margin-right: 10px;">&#9679;</span>
+                    <span style="margin-right: 10px;">Moderate</span>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <span style="color: red; font-size: 24px; margin-right: 10px;">&#9679;</span>
+                    <span>High</span>
+                </div>
+            </div>
+        """
+
+        # Generate HTML for the risk breakdown
+        risk_breakdown = """
+            <div style="background-color: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-size: 16px;">
+                <h3 style="margin-bottom: 10px;">Risk Breakdown</h3>
+        """
+
+        # Combine the legend and risk breakdown into one component
+        combined_legend_and_breakdown = f"""
+            <div style="display: flex; justify-content: space-between;">
+                {legend}
+                {risk_breakdown}
+            </div>
+        """
+
+        # Combine the risk figure, combined legend and breakdown, and advice into one component
+        combined_component = f"""
+            <div>
+                <div style="background-color: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid {category_color}; color: {category_color}; font-size: 18px; margin-bottom: 20px;text-align:center">
+                    Landslide Risk: {landslide_risk_result:.2f}% - Risk Category: {risk_category}
+                </div>
+                {combined_legend_and_breakdown}
+            </div>
+        """
+
+        # Display the combined component
+        st.markdown(combined_component, unsafe_allow_html=True)
+
+        # Display the advice with custom font
+        st.header("Advice on Site")
+        st.write(advice, unsafe_allow_html=True)
 
         # Display Map with PyDeck Scatter Plot
         st.header("GIS of Penang Hill Biosphere Reserve")
