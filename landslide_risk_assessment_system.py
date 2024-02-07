@@ -1,5 +1,6 @@
 import streamlit as st
 import numpy as np
+import pandas as pd
 import pydeck as pdk
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
@@ -283,7 +284,6 @@ def display_landslide_risk_interface():
             </div>
         """
 
-
      # Generate HTML for the risk breakdown
         risk_breakdown = f"""
             <div style="background-color: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-size: 16px;">
@@ -313,11 +313,6 @@ def display_landslide_risk_interface():
                 <div style="color: #555555; font-style: italic;">*Note: These are general guidelines. Additional factors may also affect landslide risk.</div>
             </div>
         """
-
-
-
-        
-
 
         # Combine the legend and risk breakdown into one component
         combined_legend_and_breakdown = f"""
@@ -352,8 +347,8 @@ def display_landslide_risk_interface():
         )
 
         # Display Map with PyDeck Scatter Plot
-        st.header("GIS of Penang Hill Biosphere Reserve")
-        with st.expander("Landslide Hazard Map", expanded=True):
+        st.header("GIS of Penang Hill Biosphere Reserve(PHBR) 🗺️")
+        with st.expander("Landslide Hazard Map 📌", expanded=True):
             # Create PyDeck Scatter Plot data
             data = [{"latitude": latitude, "longitude": longitude,
                      "risk": landslide_risk_result}]
@@ -389,3 +384,23 @@ def display_landslide_risk_interface():
 
             # Display the PyDeck Chart
             st.pydeck_chart(r)
+
+
+        # Generate the report data (example DataFrame)
+        report_data = pd.DataFrame({
+            'Parameter': ['Rainfall', 'Soil Saturation', 'Terrain Steepness', 'Latitude', 'Longitude', 'Risk Figure', 'Risk Category', 'Advice'],
+            'Value': [rainfall_value, saturation_value, steepness_value, latitude, longitude, landslide_risk_result, risk_category, advice]
+        })
+        
+        # Convert DataFrame to CSV bytes
+        csv_bytes = report_data.to_csv(index=False).encode('utf-8')
+
+        # Create the download button
+        st.download_button(
+            label="Download Landslide Report",
+            data=csv_bytes,
+            file_name='report.csv',
+            mime='text/csv',
+            key='download_button'  # Optional: Provide a unique key to prevent re-rendering
+        )
+       
