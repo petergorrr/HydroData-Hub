@@ -195,7 +195,7 @@ def display_landslide_risk_interface():
         """
         <div style="background-color: lightgreen; border-radius: 5px; padding: 15px; margin-bottom: 10px;">
             <h4 style="color: #1c7527; font-size: 18px; margin-bottom: 10px;"><span>🌱</span> Soil Saturation-related Rules:</h4>
-            <ul style="list-style-type: none; padding-left: 20px; color: #666666; font-size: 16px;">
+            <ul style="list-style-type: none; padding-left: 20px; color: #333333; font-size: 16px;">
                 <li><strong>Rule 3:</strong> If soil saturation is low and no occurrence before, then the landslide risk is low.</li>
                 <li><strong>Rule 4:</strong> If soil saturation is high, the landslide risk is high.</li>
             </ul>
@@ -267,7 +267,7 @@ def display_landslide_risk_interface():
         # Define the legend for risk levels
         legend = """
             <div style="background-color: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-size: 16px;">
-                <h3 style="margin-bottom: 10px;">Risk Level</h3>
+                <h3 style="margin-bottom: 10px;">Risk Level ⚠️</h3>
                 <div style="display: flex; align-items: center; margin-bottom: 5px;">
                     <span style="color: green; font-size: 24px; margin-right: 10px;">&#9679;</span>
                     <span style="margin-right: 10px;">Safe</span>
@@ -286,7 +286,7 @@ def display_landslide_risk_interface():
         # Generate HTML for the risk breakdown
         risk_breakdown = """
             <div style="background-color: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-size: 16px;">
-                <h3 style="margin-bottom: 10px;">Risk Breakdown</h3>
+                <h3 style="margin-bottom: 10px;">Risk Breakdown💡</h3>
         """
 
         # Combine the legend and risk breakdown into one component
@@ -310,9 +310,16 @@ def display_landslide_risk_interface():
         # Display the combined component
         st.markdown(combined_component, unsafe_allow_html=True)
 
-        # Display the advice with custom font
-        st.header("Advice on Site")
-        st.write(advice, unsafe_allow_html=True)
+       # Display the advice with custom font
+        st.markdown(
+            """
+            <div style="background-color: #CCCCFF; border-radius: 10px; padding: 20px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); font-family: 'Cambria', sans-serif;">
+                <h3 style="color: #333333; font-size: 28px; margin-bottom: 15px;">Advice on Site 📝</h3>
+                <p style="color: black; font-size: 18px; line-height: 1.6; margin-bottom: 0;">{}</p>
+            </div>
+            """.format(advice),
+            unsafe_allow_html=True
+        )
 
         # Display Map with PyDeck Scatter Plot
         st.header("GIS of Penang Hill Biosphere Reserve")
