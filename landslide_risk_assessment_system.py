@@ -264,30 +264,60 @@ def display_landslide_risk_interface():
         # Provide advice based on the calculated risk level and input parameters
         advice = provide_advice(risk_category, inputs)
 
-        # Define the legend for risk levels
+       # Define the legend for risk levels
         legend = """
             <div style="background-color: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-size: 16px;">
-                <h3 style="margin-bottom: 10px;">Risk Level ⚠️</h3>
-                <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                <h3 style="margin-bottom: 10px; text-align: center;">Risk Level ⚠️</h3>
+                <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">
                     <span style="color: green; font-size: 24px; margin-right: 10px;">&#9679;</span>
                     <span style="margin-right: 10px;">Safe</span>
                 </div>
-                <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">
                     <span style="color: orange; font-size: 24px; margin-right: 10px;">&#9679;</span>
                     <span style="margin-right: 10px;">Moderate</span>
                 </div>
-                <div style="display: flex; align-items: center;">
+                <div style="display: flex; align-items: center; justify-content: center;">
                     <span style="color: red; font-size: 24px; margin-right: 10px;">&#9679;</span>
                     <span>High</span>
                 </div>
             </div>
         """
 
-        # Generate HTML for the risk breakdown
-        risk_breakdown = """
+
+     # Generate HTML for the risk breakdown
+        risk_breakdown = f"""
             <div style="background-color: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-size: 16px;">
-                <h3 style="margin-bottom: 10px;">Risk Breakdown💡</h3>
+                <h3 style="margin-bottom: 10px;text-align:center">Risk Breakdown 💡</h3>
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <span style="font-size: 20px; color: #333333; margin-right: 10px;">🌧️</span>
+                        <span style="margin-right: 10px;">Rainfall: {rainfall_value}%</span>
+                        <span style="color: #666666;">(Low rainfall indicates lower risk of landslides)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <span style="font-size: 20px; color: #333333; margin-right: 10px;">🌿</span>
+                        <span style="margin-right: 10px;">Soil Saturation: {saturation_value}%</span>
+                        <span style="color: #666666;">(Higher soil saturation increases the risk of landslides)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <span style="font-size: 20px; color: #333333; margin-right: 10px;">🏞️</span>
+                        <span style="margin-right: 10px;">Terrain Steepness: {steepness_value}%</span>
+                        <span style="color: #666666;">(Steep terrain is more prone to landslides)</span>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <span style="font-size: 20px; color: #333333; margin-right: 10px;">🔄</span>
+                        <span style="margin-right: 10px;">Landslide Occurrence: {occurrence_before_value}</span>
+                        <span style="color: #666666;">(Past occurrences may increase landslide risk)</span>
+                    </div>
+                </div>
+                <div style="color: #555555; font-style: italic;">*Note: These are general guidelines. Additional factors may also affect landslide risk.</div>
+            </div>
         """
+
+
+
+        
+
 
         # Combine the legend and risk breakdown into one component
         combined_legend_and_breakdown = f"""
