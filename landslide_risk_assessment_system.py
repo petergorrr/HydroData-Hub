@@ -311,7 +311,7 @@ def display_landslide_risk_interface():
                         <span style="color: #666666;">(Past occurrences may increase landslide risk)</span>
                     </div>
                 </div>
-                <div style="color: #555555; font-style: italic;">*Note: These are general guidelines. Additional factors may also affect landslide risk.</div>
+                <div style="color: #555555; font-style: italic;">*Note: The values displayed above represent standardized scores indicating the influence of each parameter on landslide risk. Higher values suggest a higher level of risk associated with the respective parameter.</div>
             </div>
         """
 
