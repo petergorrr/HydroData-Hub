@@ -113,7 +113,6 @@ def map_risk_to_category(landslide_risk_result):
         return "High"
 
 
-# Function to provide advice based on landslide risk level and input parameters
 def provide_advice(landslide_risk_level, inputs):
     advice = ""
     if landslide_risk_level == 'Safe':
@@ -162,57 +161,57 @@ def display_landslide_risk_interface():
             "Adjust the parameters and click 'Calculate Risk' to see the results on the map."
         )
 
-    # Algorithm Flow Section
-    st.header("Algorithm Rules")
-
     # Algorithm Overview
     st.markdown(
         """
         <div style="background-color:#FA9203; border-radius: 10px; padding: 20px;">
-            <h3 style="color: #333333; font-size: 20px; margin-bottom: 10px;">Algorithm Overview🖥️</h3>
-            <p style="color: #000000; font-size: 16px;">The landslide risk assessment is based on several input parameters including rainfall, soil saturation, and terrain steepness.</p>
-            <p style="color: #000000; font-size: 16px;">Here are the rules governing the assessment:</p>
+            <h3 style="color: #333333; font-size: 20px; margin-bottom: 10px;"><strong>Algorithm Overview🖥️<strong></h3>
+            <p style="color: #000000; font-size: 16px;">The landslide risk assessment involves standardizing several input parameters, including <strong>rainfall</strong>, <strong>soil saturation</strong>, and <strong>terrain steepness</strong>, through separate models tailored for each parameter.</p>
+            <p style="color: #000000; font-size: 16px;">Here's the rationale behind standardizing each parameter:</p>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    # Rainfall-related Rules
+    # Rainfall Parameter Standardization
     st.markdown(
         """
         <div style="background-color: lightblue; border-radius: 5px; padding: 15px; margin-bottom: 10px;">
-            <h4 style="color: steelblue; font-size: 18px; margin-bottom: 10px;"><span>&#x1F327;</span> Rainfall-related Rules:</h4>
-            <ul style="list-style-type: none; padding-left: 20px; color: #333333; font-size: 16px;">
-                <li><strong>Rule 1:</strong> If rainfall is low and no occurrence before, then the landslide risk is low.</li>
-                <li><strong>Rule 2:</strong> If rainfall is high, the landslide risk is high.</li>
+            <h4 style="color: steelblue; font-size: 18px; margin-bottom: 10px;"><span>&#x1F327;</span> Rainfall Parameter Standardization:</h4>
+            <ul style="color: #333333; font-size: 16px;">
+                <li>A model is constructed using advanced statistical techniques and machine learning algorithms. It incorporates inputs such as <strong>rain intensity</strong>, <strong>duration</strong>, <strong>prevailing wind</strong>, and other relevant meteorological data.</li>
+                <li>The model undergoes rigorous training and validation processes using historical landslide data and meteorological records.</li>
+                <li>Upon successful training, the model produces a standardized output value representing the extent of influence of <strong>rainfall</strong> towards landslide risk.</li>
             </ul>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    # Soil Saturation-related Rules
+    # Soil Saturation Parameter Standardization
     st.markdown(
         """
         <div style="background-color: lightgreen; border-radius: 5px; padding: 15px; margin-bottom: 10px;">
-            <h4 style="color: #1c7527; font-size: 18px; margin-bottom: 10px;"><span>🌱</span> Soil Saturation-related Rules:</h4>
-            <ul style="list-style-type: none; padding-left: 20px; color: #333333; font-size: 16px;">
-                <li><strong>Rule 3:</strong> If soil saturation is low and no occurrence before, then the landslide risk is low.</li>
-                <li><strong>Rule 4:</strong> If soil saturation is high, the landslide risk is high.</li>
+            <h4 style="color: #1c7527; font-size: 18px; margin-bottom: 10px;"><span>🌱</span> Soil Saturation Parameter Standardization:</h4>
+            <ul style="color: #333333; font-size: 16px;">
+                <li>Another specialized model is developed using comprehensive geotechnical data and environmental factors. It considers inputs such as <strong>soil depth</strong>, <strong>soil type</strong>, <strong>rock status</strong>, and other relevant soil properties.</li>
+                <li>The model undergoes thorough calibration and validation procedures utilizing ground truth data from field surveys and laboratory experiments.</li>
+                <li>Upon completion, the model generates a standardized output value indicating the influence extent of <strong>soil saturation</strong> towards landslide risk.</li>
             </ul>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    # Terrain Steepness-related Rules
+    # Terrain Steepness Parameter Standardization
     st.markdown(
         """
         <div style="background-color: #fde0e0; border-radius: 5px; padding: 15px; margin-bottom: 10px;">
-            <h4 style="color: #af2e2e; font-size: 18px; margin-bottom: 10px;"><span>🐌</span> Terrain Steepness-related Rules:</h4>
-            <ul style="list-style-type: none; padding-left: 20px; color: #333333; font-size: 16px;">
-                <li><strong>Rule 5:</strong> If terrain steepness is gentle, the landslide risk is low.</li>
-                <li><strong>Rule 6:</strong> If terrain steepness is steep, the landslide risk is high.</li>
+            <h4 style="color: #af2e2e; font-size: 18px; margin-bottom: 10px;"><span>🐌</span> Terrain Steepness Parameter Standardization:</h4>
+            <ul style="color: #333333; font-size: 16px;">
+                <li>A separate model is developed utilizing advanced terrain analysis techniques and remote sensing data. It takes into account inputs such as <strong>inclination</strong>, <strong>height</strong>, <strong>gravity erosion</strong>, and other pertinent terrain characteristics.</li>
+                <li>The model is fine-tuned through extensive validation against high-resolution elevation data and geological surveys.</li>
+                <li>Once trained, the model provides a standardized output value reflecting the influence extent of <strong>terrain steepness</strong> towards landslide risk.</li>
             </ul>
         </div>
         """,
@@ -227,7 +226,7 @@ def display_landslide_risk_interface():
 
     # User Input: Fuzzy Logic Variables
     st.header("Landslide Risk Parameters")
-    with st.expander("Standardised Parameters", expanded=True):
+    with st.expander("Standardised Values of the Parameters", expanded=True):
         rainfall_value = st.slider("Select Rainfall (0-100):", 0, 100, 50)
         saturation_value = st.slider(
             "Select Soil Saturation (0-100):", 0, 100, 50)
@@ -235,6 +234,8 @@ def display_landslide_risk_interface():
             "Select Terrain Steepness (0-100):", 0, 100, 50)
         occurrence_before_value = st.radio(
             "Was there an Occurrence Before?", ['No', 'Yes'])
+
+    st.write("*Note: The standardized value indicates the* ***extent of influence towards landslide risk***.")
 
     # Convert the occurrence_before_value to a numerical value
     occurrence_mapping = {'No': 25, 'Yes': 75}
@@ -284,24 +285,24 @@ def display_landslide_risk_interface():
             </div>
         """
 
-     # Generate HTML for the risk breakdown
+        # Generate HTML for the risk breakdown
         risk_breakdown = f"""
             <div style="background-color: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-size: 16px;">
                 <h3 style="margin-bottom: 10px;text-align:center">Risk Breakdown 💡</h3>
                 <div style="margin-bottom: 15px;">
                     <div style="display: flex; align-items: center; margin-bottom: 5px;">
                         <span style="font-size: 20px; color: #333333; margin-right: 10px;">🌧️</span>
-                        <span style="margin-right: 10px;">Rainfall: {rainfall_value}%</span>
+                        <span style="margin-right: 10px;">Rainfall: {rainfall_value}</span>
                         <span style="color: #666666;">(Low rainfall indicates lower risk of landslides)</span>
                     </div>
                     <div style="display: flex; align-items: center; margin-bottom: 5px;">
                         <span style="font-size: 20px; color: #333333; margin-right: 10px;">🌿</span>
-                        <span style="margin-right: 10px;">Soil Saturation: {saturation_value}%</span>
+                        <span style="margin-right: 10px;">Soil Saturation: {saturation_value}</span>
                         <span style="color: #666666;">(Higher soil saturation increases the risk of landslides)</span>
                     </div>
                     <div style="display: flex; align-items: center; margin-bottom: 5px;">
                         <span style="font-size: 20px; color: #333333; margin-right: 10px;">🏞️</span>
-                        <span style="margin-right: 10px;">Terrain Steepness: {steepness_value}%</span>
+                        <span style="margin-right: 10px;">Terrain Steepness: {steepness_value}</span>
                         <span style="color: #666666;">(Steep terrain is more prone to landslides)</span>
                     </div>
                     <div style="display: flex; align-items: center;">
@@ -313,6 +314,7 @@ def display_landslide_risk_interface():
                 <div style="color: #555555; font-style: italic;">*Note: These are general guidelines. Additional factors may also affect landslide risk.</div>
             </div>
         """
+
 
         # Combine the legend and risk breakdown into one component
         combined_legend_and_breakdown = f"""
@@ -385,13 +387,12 @@ def display_landslide_risk_interface():
             # Display the PyDeck Chart
             st.pydeck_chart(r)
 
-
         # Generate the report data (example DataFrame)
         report_data = pd.DataFrame({
             'Parameter': ['Rainfall', 'Soil Saturation', 'Terrain Steepness', 'Latitude', 'Longitude', 'Risk Figure', 'Risk Category', 'Advice'],
             'Value': [rainfall_value, saturation_value, steepness_value, latitude, longitude, landslide_risk_result, risk_category, advice]
         })
-        
+
         # Convert DataFrame to CSV bytes
         csv_bytes = report_data.to_csv(index=False).encode('utf-8')
 
@@ -401,6 +402,5 @@ def display_landslide_risk_interface():
             data=csv_bytes,
             file_name='report.csv',
             mime='text/csv',
-            key='download_button'  # Optional: Provide a unique key to prevent re-rendering
+            key='download_button'
         )
-       
