@@ -24,7 +24,7 @@ def main():
     if selected_section == "Landslide Risk Assessment System":
         display_landslide_risk_interface()
     elif selected_section == "Smart Water Meter System":
-        display_smart_water_meter_interface(df)
+        display_smart_water_meter_interface()
 
 
 if __name__ == "__main__":
