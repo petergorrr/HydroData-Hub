@@ -2,8 +2,13 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 
+# Load the dataset
+file_path = 'water_data.csv'
+df = pd.read_csv(file_path)
 
 # Function to format numbers
+
+
 def format_number(number):
     return f"{number:,}"
 
@@ -13,6 +18,11 @@ def calculate_water_consumption_difference(df, selected_month):
     df_selected_month = df[df['month'] == selected_month]
     df_sorted = df_selected_month.sort_values(
         by='water_consumption', ascending=False)
+    if df_sorted.shape[0] > 1:
+        df_sorted['difference'] = df_sorted['water_consumption'].diff(
+            -1).fillna(0).abs()
+    else:
+        df_sorted['difference'] = 0
     return df_sorted
 
 
@@ -30,72 +40,57 @@ def make_donut(input_response, input_text, input_color):
         "Topic": ['', input_text],
         "% value": [100 - input_response, input_response]
     })
-    source_bg = pd.DataFrame({
-        "Topic": ['', input_text],
-        "% value": [100, 0]
-    })
 
     plot = alt.Chart(source).mark_arc(innerRadius=45, cornerRadius=25).encode(
-        theta="% value",
+        theta=alt.Theta("% value:Q", stack=True),
         color=alt.Color("Topic:N", scale=alt.Scale(
-            domain=[input_text, ''], range=chart_color), legend=None)
-    ).properties(width=130, height=130)
+            range=chart_color), legend=None),
+        tooltip=["Topic:N", "% value:Q"]
+    ).properties(width=200, height=200)
 
-    text = plot.mark_text(align='center', color="#29b5e8", font="Lato", fontSize=32,
-                          fontWeight=700, fontStyle="italic").encode(text=alt.value(f'{input_response} %'))
-
-    plot_bg = alt.Chart(source_bg).mark_arc(innerRadius=45, cornerRadius=20).encode(
-        theta="% value",
-        color=alt.Color("Topic:N", scale=alt.Scale(
-            domain=[input_text, ''], range=chart_color), legend=None)
-    ).properties(width=130, height=130)
-
-    return plot_bg + plot + text
+    return plot
 
 
-
-# Main function to display interface
 def display_smart_water_meter_interface():
-    with st.sidebar:
-        st.title('Smart Water Meter System🚰')
-        st.image("images/smart_water_meter.jpg", use_column_width=True)
-        st.info("The Smart Water Meter System provides real-time monitoring and analytics for water consumption. "
-                "Track usage patterns, detect leaks, and make informed decisions for efficient water management.")
+    st.title('Smart Water Meter Dashboard')
 
+    # Sidebar for user inputs
+    with st.sidebar:
         selected_month = st.selectbox('Select Month', df['month'].unique())
         selected_color_theme = st.selectbox(
-            'Select a color theme', ['blues', 'greens', 'reds'])
+            'Select a color theme', ['blue', 'green', 'red', 'orange'])
 
-    with st.container():
-        st.markdown('#### Water Consumption Metrics')
+    # Main dashboard layout
+    df_consumption_difference_sorted = calculate_water_consumption_difference(
+        df, selected_month)
 
-        df_consumption_difference_sorted = calculate_water_consumption_difference(
-            df, selected_month)
-
+    if not df_consumption_difference_sorted.empty:
+        # High consumption data
         high_consumption_state_name = df_consumption_difference_sorted.iloc[0]['states']
         high_consumption_value = df_consumption_difference_sorted.iloc[0]['water_consumption']
-        high_consumption_delta = int(df_consumption_difference_sorted.iloc[0]['water_consumption'] -
-                                     df_consumption_difference_sorted.iloc[1]['water_consumption'])
+        high_consumption_delta = df_consumption_difference_sorted.iloc[0]['difference']
 
+        # Low consumption data
         low_consumption_state_name = df_consumption_difference_sorted.iloc[-1]['states']
         low_consumption_value = df_consumption_difference_sorted.iloc[-1]['water_consumption']
-        low_consumption_delta = int(df_consumption_difference_sorted.iloc[-1]['water_consumption'] -
-                                    df_consumption_difference_sorted.iloc[-2]['water_consumption'])
+        low_consumption_delta = df_consumption_difference_sorted.iloc[-1]['difference']
 
-        migrations_col = st.columns((0.2, 1, 0.2))
-        with migrations_col[1]:
+        # Layout adjustment
+        col = st.columns((1, 1), gap="medium")
+
+        with col[0]:
+            st.markdown('#### High Consumption')
             st.metric(label=high_consumption_state_name,
-                      value=high_consumption_value, delta=high_consumption_delta)
-            st.write('High Consumption')
-            st.altair_chart(make_donut(high_consumption_value,
-                            'High Consumption', selected_color_theme))
+                      value=f"{high_consumption_value} liters", delta=f"Δ {high_consumption_delta} liters")
+            st.altair_chart(make_donut(high_consumption_value, 'High Consumption',
+                            selected_color_theme), use_container_width=True)
 
+        with col[1]:
+            st.markdown('#### Low Consumption')
             st.metric(label=low_consumption_state_name,
-                      value=low_consumption_value, delta=low_consumption_delta)
-            st.write('Low Consumption')
-            st.altair_chart(make_donut(low_consumption_value,
-                            'Low Consumption', selected_color_theme))
+                      value=f"{low_consumption_value} liters", delta=f"Δ {low_consumption_delta} liters")
+            st.altair_chart(make_donut(low_consumption_value, 'Low Consumption',
+                            selected_color_theme), use_container_width=True)
 
-# Read the dataset
-file_path = 'water_data.csv'
-df = pd.read_csv(file_path)
+    else:
+        st.write("No data available for the selected month.")

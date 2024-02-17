@@ -6,100 +6,82 @@ import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
 
+def define_membership_function(variable, names, points):
+    for name, point in zip(names, points):
+        variable[name] = fuzz.trimf(variable.universe, point)
+
+
+def create_rule(conditions, output):
+    return ctrl.Rule(antecedent=conditions, consequent=output)
+
+
 def create_fuzzy_system():
-    # Create input variables
-    rainfall = ctrl.Antecedent(np.arange(0, 101, 1), 'rainfall')
-    soil_saturation = ctrl.Antecedent(np.arange(0, 101, 1), 'soil_saturation')
-    terrain_steepness = ctrl.Antecedent(
-        np.arange(0, 101, 1), 'terrain_steepness')
-    occurrence_before = ctrl.Antecedent(
-        np.arange(0, 101, 1), 'occurrence_before')
+    # Antecedent/Consequent objects hold universe variables and membership functions
+    variables = {
+        'rainfall': np.arange(0, 101, 1),
+        'soil_saturation': np.arange(0, 101, 1),
+        'terrain_steepness': np.arange(0, 101, 1),
+        'occurrence_before': np.arange(0, 101, 1),
+        'landslide_risk': np.arange(0, 101, 1)
+    }
 
-    # Create output variable
-    landslide_risk = ctrl.Consequent(np.arange(0, 101, 1), 'landslide_risk')
+    # Create input and output variables
+    inputs = {k: ctrl.Antecedent(
+        v, k) for k, v in variables.items() if k != 'landslide_risk'}
+    landslide_risk = ctrl.Consequent(
+        variables['landslide_risk'], 'landslide_risk')
 
-    # Define membership functions
-    # Membership functions for rainfall
-    rainfall['low'] = fuzz.trimf(rainfall.universe, [0, 0, 50])
-    rainfall['moderate'] = fuzz.trimf(rainfall.universe, [0, 50, 100])
-    rainfall['high'] = fuzz.trimf(rainfall.universe, [50, 100, 100])
+    # Membership function names and points for inputs
+    mf_names = {
+        'rainfall': ['low', 'moderate', 'high'],
+        'soil_saturation': ['low', 'medium', 'high'],
+        'terrain_steepness': ['gentle', 'moderate', 'steep'],
+        'occurrence_before': ['no', 'yes']
+    }
 
-    # Membership functions for soil saturation
-    soil_saturation['low'] = fuzz.trimf(soil_saturation.universe, [0, 0, 50])
-    soil_saturation['medium'] = fuzz.trimf(
-        soil_saturation.universe, [0, 50, 100])
-    soil_saturation['high'] = fuzz.trimf(
-        soil_saturation.universe, [50, 100, 100])
+    mf_points = {
+        'rainfall': [[0, 0, 50], [0, 50, 100], [50, 100, 100]],
+        'soil_saturation': [[0, 0, 50], [0, 50, 100], [50, 100, 100]],
+        'terrain_steepness': [[0, 0, 50], [0, 50, 100], [50, 100, 100]],
+        'occurrence_before': [[0, 0, 50], [50, 100, 100]]
+    }
 
-    # Membership functions for terrain steepness
-    terrain_steepness['gentle'] = fuzz.trimf(
-        terrain_steepness.universe, [0, 0, 50])
-    terrain_steepness['moderate'] = fuzz.trimf(
-        terrain_steepness.universe, [0, 50, 100])
-    terrain_steepness['steep'] = fuzz.trimf(
-        terrain_steepness.universe, [50, 100, 100])
+    # Define membership functions for inputs
+    for var_name, names in mf_names.items():
+        define_membership_function(
+            inputs[var_name], names, mf_points[var_name])
 
-    # Membership functions for occurrence before
-    occurrence_before['no'] = fuzz.trimf(
-        occurrence_before.universe, [0, 0, 50])
-    occurrence_before['yes'] = fuzz.trimf(
-        occurrence_before.universe, [50, 100, 100])
-
-    # Membership functions for landslide risk
-    landslide_risk['low'] = fuzz.trimf(landslide_risk.universe, [0, 0, 50])
-    landslide_risk['moderate'] = fuzz.trimf(
-        landslide_risk.universe, [0, 50, 100])
-    landslide_risk['high'] = fuzz.trimf(
-        landslide_risk.universe, [50, 100, 100])
+    # Define membership functions for landslide risk
+    landslide_risk_mf_names = ['low', 'moderate', 'high']
+    landslide_risk_mf_points = [[0, 0, 50], [0, 50, 100], [50, 100, 100]]
+    define_membership_function(
+        landslide_risk, landslide_risk_mf_names, landslide_risk_mf_points)
 
     # Define rules
-    rule1 = ctrl.Rule(
-        antecedent=(
-            (rainfall['low'] & soil_saturation['low'] & occurrence_before['no'])),
-        consequent=landslide_risk['low']
-    )
+    rules = [
+        create_rule((inputs['rainfall']['low'] & inputs['soil_saturation']
+                    ['low'] & inputs['occurrence_before']['no']), landslide_risk['low']),
+        create_rule((inputs['rainfall']['high'] | inputs['soil_saturation']['high'] |
+                    inputs['terrain_steepness']['steep'] | inputs['occurrence_before']['yes']), landslide_risk['high']),
+        create_rule((inputs['rainfall']['moderate'] &
+                    inputs['soil_saturation']['medium']), landslide_risk['moderate']),
+        create_rule((inputs['terrain_steepness']['gentle']),
+                    landslide_risk['low']),
+        create_rule((inputs['rainfall']['high'] & inputs['terrain_steepness']
+                    ['moderate']), landslide_risk['moderate']),
+        create_rule((inputs['soil_saturation']['high'] &
+                    inputs['terrain_steepness']['gentle']), landslide_risk['moderate']),
+        create_rule((inputs['rainfall']['moderate'] &
+                    inputs['terrain_steepness']['steep']), landslide_risk['high'])
+    ]
 
-    rule2 = ctrl.Rule(
-        antecedent=((rainfall['high'] | soil_saturation['high'] | terrain_steepness['steep'] |
-                     occurrence_before['yes'])),
-        consequent=landslide_risk['high']
-    )
-
-    rule3 = ctrl.Rule(
-        antecedent=((rainfall['moderate'] & soil_saturation['medium'])),
-        consequent=landslide_risk['moderate']
-    )
-
-    rule4 = ctrl.Rule(
-        antecedent=(terrain_steepness['gentle']),
-        consequent=landslide_risk['low']
-    )
-
-    rule5 = ctrl.Rule(
-        antecedent=((rainfall['high'] & terrain_steepness['moderate'])),
-        consequent=landslide_risk['moderate']
-    )
-
-    rule6 = ctrl.Rule(
-        antecedent=((soil_saturation['high'] & terrain_steepness['gentle'])),
-        consequent=landslide_risk['moderate']
-    )
-
-    rule7 = ctrl.Rule(
-        antecedent=((rainfall['moderate'] & terrain_steepness['steep'])),
-        consequent=landslide_risk['high']
-    )
-
-    # Create the control system
-    return ctrl.ControlSystem(rules=[rule1, rule2, rule3, rule4, rule5, rule6, rule7])
+    return ctrl.ControlSystem(rules)
 
 
 def calculate_landslide_risk(fuzzy_system, inputs):
     landslide_sim = ctrl.ControlSystemSimulation(fuzzy_system)
-    landslide_sim.input['rainfall'] = inputs['rainfall']
-    landslide_sim.input['soil_saturation'] = inputs['soil_saturation']
-    landslide_sim.input['terrain_steepness'] = inputs['terrain_steepness']
-    landslide_sim.input['occurrence_before'] = inputs['occurrence_before']
+    for k, v in inputs.items():
+        landslide_sim.input[k] = v
     landslide_sim.compute()
     return landslide_sim.output['landslide_risk']
 
@@ -113,42 +95,14 @@ def map_risk_to_category(landslide_risk_result):
         return "High"
 
 
-def provide_advice(landslide_risk_level, inputs):
-    advice = ""
-    if landslide_risk_level == 'Safe':
-        if inputs['rainfall'] <= 30:
-            advice += "Rainfall is low. It's relatively safe, but keep an eye on any changes. "
-        elif 30 < inputs['rainfall'] <= 60:
-            advice += "Rainfall is moderate. Exercise caution and monitor for any signs of saturation. "
-        else:
-            advice += "Rainfall is high. Although the risk is low, be vigilant for any unusual activity. "
-
-        if inputs['soil_saturation'] <= 40:
-            advice += "Soil saturation is moderate. Stay alert for signs of instability. "
-        elif 40 < inputs['soil_saturation'] <= 70:
-            advice += "Soil saturation is high. Avoid steep slopes and areas prone to erosion. "
-        else:
-            advice += "Soil saturation is very high. Evacuate immediately to higher ground. "
-
-        if inputs['terrain_steepness'] <= 40:
-            advice += "Terrain is moderately steep. Continue to monitor for any changes. "
-        elif 40 < inputs['terrain_steepness'] <= 70:
-            advice += "Terrain is very steep. Exercise caution and avoid steep areas. "
-        else:
-            advice += "Terrain is extremely steep. Evacuate to high ground immediately. Do not return until it's safe. "
-    elif landslide_risk_level == 'Moderate':
-        if inputs['rainfall'] <= 30:
-            advice += "Rainfall is low, but soil saturation and terrain steepness pose moderate risk. "
-        elif 30 < inputs['rainfall'] <= 60:
-            advice += "Rainfall is moderate. Exercise caution due to moderate soil saturation and terrain steepness. "
-        else:
-            advice += "Rainfall is high. Be extremely cautious due to high soil saturation and steep terrain. "
-    elif landslide_risk_level == 'High':
-        advice += "High risk of landslide due to extreme conditions. Immediate evacuation is necessary. "
-    else:
-        advice = "Invalid risk level. Please input a valid risk level (Low Risk, Moderate Risk, High Risk)."
-
-    return advice
+def provide_advice(risk_category, inputs):
+    # Example simplified advice logic
+    advice = {
+        'Safe': "It's relatively safe, but remain vigilant for any changes.",
+        'Moderate': "Exercise caution and monitor for any signs of instability.",
+        'High': "Immediate evacuation is necessary due to high risk."
+    }
+    return advice.get(risk_category, "Invalid risk level. Please input a valid risk level.")
 
 
 def display_landslide_risk_interface():
@@ -162,10 +116,11 @@ def display_landslide_risk_interface():
         )
 
     # Algorithm Overview
+
     st.markdown(
         """
         <div style="background-color:#FA9203; border-radius: 10px; padding: 20px;">
-            <h3 style="color: #333333; font-size: 20px; margin-bottom: 10px;"><strong>Algorithm Overview🖥️<strong></h3>
+            <h3 style="color: #333333; font-size: 20px; margin-bottom: 10px;"><strong>Algorithm Overview🧑‍💻<strong></h3>
             <p style="color: #000000; font-size: 16px;">The landslide risk assessment involves standardizing several input parameters, including <strong>rainfall</strong>, <strong>soil saturation</strong>, and <strong>terrain steepness</strong>, through separate models tailored for each parameter.</p>
             <p style="color: #000000; font-size: 16px;">Here's the rationale behind standardizing each parameter:</p>
         </div>
@@ -314,7 +269,6 @@ def display_landslide_risk_interface():
                 <div style="color: #555555; font-style: italic;">*Note: The values displayed above represent standardized scores indicating the influence of each parameter on landslide risk. Higher values suggest a higher level of risk associated with the respective parameter.</div>
             </div>
         """
-
 
         # Combine the legend and risk breakdown into one component
         combined_legend_and_breakdown = f"""
