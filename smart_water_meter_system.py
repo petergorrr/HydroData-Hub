@@ -59,7 +59,6 @@ def display_forecast_chart(df):
         tooltip=['State:N', 'Forecasted Water Consumption (liters):Q']).properties(width=700, height=400)
     return forecast_chart
 
-# Function to display choropleth map
 def display_choropleth(geojson):
     """Display a choropleth map using Pydeck."""
     # Define the Pydeck layer for the choropleth map
@@ -72,9 +71,9 @@ def display_choropleth(geojson):
         extruded=False,
         get_fill_color="""
             [
-                255,
-                255 - properties.water_consumption / 1000 * 255,
-                255 - properties.water_consumption / 1000 * 255,
+                properties.water_consumption == 0 ? 0 : 255, 
+                properties.water_consumption == 0 ? 0 : 255 - properties.water_consumption / 1000 * 255,
+                properties.water_consumption == 0 ? 0 : 255 - properties.water_consumption / 1000 * 255,
                 properties.water_consumption / 2000 * 255 + 100
             ]
         """,  # Blue color scale based on water consumption
@@ -88,6 +87,21 @@ def display_choropleth(geojson):
     # Render the map with Pydeck
     st.pydeck_chart(pdk.Deck(layers=[layer], initial_view_state=view_state))
     
+    
+
+def make_donut(input_response, input_text, input_color):
+    """Creates a donut chart for water consumption visualization."""
+    chart_colors = {'blue': ['#29b5e8', '#155F7A'], 'green': ['#27AE60', '#12783D'],
+                    'orange': ['#F39C12', '#875A12'], 'red': ['#E74C3C', '#781F16']}
+    chart_color = chart_colors.get(input_color, ['#29b5e8', '#155F7A'])
+    source = pd.DataFrame({"Topic": ['', input_text], "% value": [100 - input_response, input_response]})
+    plot = alt.Chart(source).mark_arc(innerRadius=45, cornerRadius=25).encode(
+        theta=alt.Theta("% value:Q", stack=True),
+        color=alt.Color("Topic:N", scale=alt.Scale(range=chart_color), legend=None),
+        tooltip=["Topic:N", "% value:Q"]).properties(width=200, height=200)
+    return plot
+
+
 # Streamlit application layout
 def display_smart_water_meter_interface():
     st.title('Enhanced Smart Water Meter Dashboard')
@@ -96,13 +110,13 @@ def display_smart_water_meter_interface():
     # Sidebar for settings
     with st.sidebar:
         st.markdown("## Dashboard Settings 🛠")
-        selected_color_theme = st.selectbox('Select a color theme', ['blue', 'green', 'red', 'orange'], index=0)
-        selected_month = st.selectbox('Select Month', df['month'].unique(), index=0)
         selected_states = st.multiselect('Select states for comparison:', df['states'].unique())
 
     # Water Consumption Analysis
     st.markdown("## Water Consumption Analysis 📊")
     st.altair_chart(plot_time_series(df))
+    
+    
 
     if selected_states:
         st.markdown("### State Comparison")
