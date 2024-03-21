@@ -115,50 +115,39 @@ def make_donut(input_response, input_text, input_color):
 
 
 # Streamlit application layout
-def display_smart_water_meter_interface():
-
-    st.title('Smart Water Meter Dashboard')
-    st.markdown("""Explore dynamic water consumption patterns across different states and months. Adjust the selections below to analyze trends, compare states, and uncover insights.""")
+st.title('Smart Water Meter Dashboard')
+st.markdown("""Explore dynamic water consumption patterns across different states and months. Adjust the selections below to analyze trends, compare states, and uncover insights.""")
 
   # Sidebar for settings
-    with st.sidebar:
-        st.title("Smart Water Meter System")
-        st.image("images/smart_water_meter.jpg", use_column_width=True)
-        st.info(
-            "This app provides insights into water consumption patterns based on historical data and forecasts. "
-            "Explore dynamic visualizations to:\n"
-            "- Analyze trends across different states and months.\n"
-            "- Compare states to uncover differences and similarities.\n"
-            "- View forecasts to anticipate future water consumption.\n"
-            "Adjust the selections in the main interface to interact with the data and uncover insights."
-        )
+with st.sidebar:
+    st.title("Smart Water Meter System")
+    st.image("images/smart_water_meter.jpg", use_column_width=True)
+    st.info(
+        "This app provides insights into water consumption patterns based on historical data and forecasts. "
+        "Explore dynamic visualizations to:\n"
+        "- Analyze trends across different states and months.\n"
+        "- Compare states to uncover differences and similarities.\n"
+        "- View forecasts to anticipate future water consumption.\n"
+        "Adjust the selections in the main interface to interact with the data and uncover insights."
+    )
+    st.markdown("---")
+    st.write("This application is for authorized use only.")
+    st.markdown("Copyright © Make Water OK Malaysia")
 
-        st.markdown("## Dashboard Settings 🛠")
-        selected_states = st.multiselect(
-            'Select states for comparison:', df['states'].unique())
+st.markdown("## Dashboard Settings 🛠")
+selected_states = st.multiselect(
+    'Select states for comparison:', df['states'].unique())
 
-    # Water Consumption Analysis
-    st.markdown("## Water Consumption Analysis 📊")
-    st.altair_chart(plot_time_series(df))
+if selected_states:
+    st.markdown("### State Comparison")
+    st.altair_chart(compare_states(df, selected_states))
 
-    if selected_states:
-        st.markdown("### State Comparison")
-        st.altair_chart(compare_states(df, selected_states))
+# Water Consumption Analysis
+st.markdown("## Water Consumption Analysis 📊")
+st.altair_chart(plot_time_series(df))
 
-    # Forecast section
-    st.markdown("## Forecast Analysis 🚀")
-    st.markdown("### Forecasted Water Consumption by State for the Coming Year")
-    st.altair_chart(display_forecast_chart(df))
 
-    # # Display the choropleth map
-    # st.markdown("## Water Consumption in Penang - Choropleth Map")
-    # display_choropleth(penang_geojson)
-
-    # # Display a legend for the choropleth map
-    # st.markdown("### Legend")
-    # st.markdown("""
-    # - **Blue**: 0-500 liters
-    # - **Light Blue**: 500-1000 liters
-    # - **Very Light Blue**: 1000-2000 liters
-    # - **Almost White**: 2000+ liters
-    # """)
+# Forecast section
+st.markdown("## Forecast Analysis 🚀")
+st.markdown("### Forecasted Water Consumption by State for the Coming Year")
+st.altair_chart(display_forecast_chart(df))
