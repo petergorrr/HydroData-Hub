@@ -1,0 +1,13 @@
+Metric_Month,Metric_Avg_Temperature_Degree_Celsius,Metric_Avg_Temperature_Degree_Celsius_Delta,Metric_Avg_Rainfall_Mm,Metric_Avg_Rainfall_Mm_Delta,Metric_Avg_Humidity_Percent,Metric_Avg_Humidity_Percent_Delta
+January,23,6,212,23,32,11
+February,21,-2,144,-68,62,30
+March,17,-4,190,46,23,-39
+April,23,6,241,51,24,1
+May,24,1,305,64,58,34
+June,22,-2,287,-18,33,-25
+July,21,-1,333,46,26,-7
+August,16,-5,160,-173,32,6
+September,18,2,127,-33,59,27
+October,19,1,224,97,14,-45
+November,23,4,126,-98,50,36
+December,17,-6,189,63,21,-29
