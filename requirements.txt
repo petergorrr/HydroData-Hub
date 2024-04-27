@@ -10,4 +10,4 @@ scikit_fuzzy==0.4.2
 scikit_learn==1.4.1.post1
 streamlit==1.32.2
 streamlit_image_comparison==0.0.4
-~treamlit==1.32.1
+
