@@ -197,8 +197,6 @@ with st.sidebar:
                 <li><a href="https://weather.com/" class="source-link" target="_blank">Rainfall Data - The Weather Company</a></li>
                 <li><a href="https://www.usgs.gov/" class="source-link" target="_blank">Slope Steepness Data - USGS</a></li>
                 <li><a href="https://smap.jpl.nasa.gov/" class="source-link" target="_blank">Soil Moisture Data - NASA's SMAP satellite</a></li>
-                <li>Human Activity Data - Local government reports or construction industry records</li>
-                <li>Groundwater Impact Data - Environmental protection agencies or geological surveys</li>
             </ul>
         </div>
     """, unsafe_allow_html=True)

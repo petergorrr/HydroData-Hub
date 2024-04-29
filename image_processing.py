@@ -1,5 +1,4 @@
 import cv2
-import numpy as np
 
 def detect_and_annotate(image_np):
     # Convert the image to grayscale
