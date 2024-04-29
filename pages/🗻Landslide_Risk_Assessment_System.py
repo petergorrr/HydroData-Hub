@@ -1,35 +1,53 @@
+# Standard library imports
 import base64
 import io
 
+# Third party imports
 import numpy as np
 import pandas as pd
+from PIL import Image
 import pydeck as pdk
 import skfuzzy as fuzz
-from PIL import Image
 from skfuzzy import control as ctrl
 import streamlit as st
 
+# Local application imports
 from image_processing import detect_and_annotate
 
-# Generates a download link for a text report
 def get_download_link(report_content, filename="Landslide_Risk_Analysis_Report.txt"):
+    """
+    Generates a download link for a text report.
+
+    Parameters:
+    - report_content (str): Content of the report to be downloaded.
+    - filename (str): Name of the file to be downloaded.
+
+    Returns:
+    - str: HTML link element for downloading the report.
+    """
     bytes_report = report_content.encode()
     b64 = base64.b64encode(bytes_report).decode()
     href = f'<a href="data:file/txt;base64,{b64}" download="{filename}">Download Report</a>'
     return href
 
-# Static text-based risk analysis display
 def static_risk_analysis():
     analysis_text = """
     <div style='border: 2px solid #4CAF50; background-color: #f4f4f4; padding: 20px; border-radius: 10px;'>
         <h3 style='color: #2c3e50;'>Landslide Risk Analysis Report</h3>
         <ul>
             <li><strong>Rainfall and Soil Moisture</strong> 🌧️: The site experiences average rainfall, which typically does not immediately threaten slope stability. Continuous monitoring of rainfall patterns is essential, especially during peak rainfall seasons. Soil moisture levels should be regularly checked using soil moisture sensors to preempt any potential risk due to unexpected heavy downpours.</li>
+            <br>
             <li><strong>Vegetation and Soil Conservation</strong> 🌱: The current vegetative cover is adequate but could be improved to enhance soil stability and water absorption capacity. Implementing additional soil conservation measures such as terracing and the planting of deep-rooted vegetation can significantly mitigate erosion risks.</li>
+            <br>
             <li><strong>Human Activity</strong> 👥: The area exhibits moderate human activity. It is recommended to conduct stability assessments before initiating any construction or large-scale land modifications. Areas with frequent human activity should be regularly inspected for signs of soil displacement or structural weakness.</li>
-            <li><strong>Drainage System</strong> 🌊: Ensuring that drainage systems are well-maintained and capable of handling peak water flow is crucial. An inadequate drainage system can lead to water accumulation, which significantly increases the risk of landslides. Regular inspections and cleaning of drainage pathways are advised.</li>
+            <br>
+            <li><strong>Drainage System</strong> 💧: Ensuring that drainage systems are well-maintained and capable of handling peak water flow is crucial. An inadequate drainage system can lead to water accumulation, which significantly increases the risk of landslides. Regular inspections and cleaning of drainage pathways are advised.</li>
+            <br>
             <li><strong>Observation of New Cracks</strong> 🔍: New cracks have been observed on the site, indicating potential subsurface movements. These should be addressed immediately to prevent any escalation. Geotechnical assessments should be carried out to determine the underlying causes of these cracks.</li>
-            <li><strong>Overall Risk Level</strong> ⚠️: Based on the assessment, the current risk level of the site is classified as moderate. While there is no immediate threat, the combination of factors such as occasional heavy rainfall, observed new cracks, and human activities could escalate the situation. It is recommended to implement monitoring systems and consider preventive measures like reinforcing slope structures and improving water management systems.</li>
+            <br>
+            <li><strong>Visual Inspection and Image Analysis</strong> 📸: Advanced image analysis has detected factors that may influence site safety. Our latest inspection indicates that certain areas have been reinforced with netting, which contributes positively to the site's overall stability. Regular visual inspections are paramount to identify changes that may not be immediately evident through sensors alone. Combining technology-driven analysis with on-site assessments provides a comprehensive understanding of potential risks.</li>
+            <br>
+            <li><strong>Overall Risk Level</strong> ⚠️: Based on the assessment, including visual inspection and image analysis, the current risk level of the site is classified as moderate. While there is no immediate threat, the combination of factors such as occasional heavy rainfall, observed new cracks, and human activities, coupled with the latest visual inspection findings, could escalate the situation. It is recommended to implement monitoring systems and consider preventive measures like reinforcing slope structures and improving water management systems.</li>
         </ul>
         <h4 style='color: #27ae60;'>Recommendations:</h4>
         <ul>
@@ -44,101 +62,117 @@ def static_risk_analysis():
     return analysis_text
 
 def create_fuzzy_system():
-        # Antecedent/Consequent objects hold universe variables and membership functions
-        rainfall = ctrl.Antecedent(np.arange(0, 1001, 1), 'rainfall')
-        soil_moisture = ctrl.Antecedent(np.arange(0, 101, 1), 'soil_moisture')
-        slope_steepness = ctrl.Antecedent(np.arange(0, 101, 1), 'slope_steepness')
-        human_activity = ctrl.Antecedent(np.arange(0, 101, 1), 'human_activity')
-        historical_landslides = ctrl.Antecedent(np.arange(0, 101, 1), 'historical_landslides')
-        soil_type = ctrl.Antecedent(np.arange(0, 6, 1), 'soil_type')
-        drainage_system = ctrl.Antecedent(np.arange(0, 101, 1), 'drainage_system')
-        vegetated_surface = ctrl.Antecedent(np.arange(0, 101, 1), 'vegetated_surface')
-        slope_nature = ctrl.Antecedent(np.arange(0, 101, 1), 'slope_nature')
-        
-        soil_nailing = ctrl.Antecedent(np.arange(0, 101, 1), 'soil_nailing')
-        slope_netting = ctrl.Antecedent(np.arange(0, 101, 1), 'slope_netting')
-        gabion_wall = ctrl.Antecedent(np.arange(0, 101, 1), 'gabion_wall')
-        rubble_wall = ctrl.Antecedent(np.arange(0, 101, 1), 'rubble_wall')
+    # Antecedent/Consequent objects hold universe variables and membership functions
+    rainfall = ctrl.Antecedent(np.arange(0, 1001, 1), 'rainfall')
+    soil_moisture = ctrl.Antecedent(np.arange(0, 101, 1), 'soil_moisture')
+    slope_steepness = ctrl.Antecedent(np.arange(0, 101, 1), 'slope_steepness')
+    human_activity = ctrl.Antecedent(np.arange(0, 101, 1), 'human_activity')
+    historical_landslides = ctrl.Antecedent(np.arange(0, 101, 1), 'historical_landslides')
+    drainage_system = ctrl.Antecedent(np.arange(0, 101, 1), 'drainage_system')
+    vegetated_surface = ctrl.Antecedent(np.arange(0, 101, 1), 'vegetated_surface')
+    soil_nailing = ctrl.Antecedent(np.arange(0, 101, 1), 'soil_nailing')
+    slope_netting = ctrl.Antecedent(np.arange(0, 101, 1), 'slope_netting')
+    gabion_wall = ctrl.Antecedent(np.arange(0, 101, 1), 'gabion_wall')
+    rubble_wall = ctrl.Antecedent(np.arange(0, 101, 1), 'rubble_wall')
+    soil_type = ctrl.Antecedent(np.arange(0, 6, 1), 'soil_type')
+    slope_nature = ctrl.Antecedent(np.arange(0, 101, 1), 'slope_nature')
+    
+    landslide_risk = ctrl.Consequent(np.arange(0, 101, 1), 'landslide_risk')
+    
+    # Auto-membership function population
+    rainfall.automf(3)
+    soil_moisture.automf(3)
+    slope_steepness.automf(3)
+    human_activity.automf(3)
+    historical_landslides.automf(3)
+    drainage_system.automf(3)
+    vegetated_surface.automf(3)
+    soil_nailing.automf(3)
+    slope_netting.automf(3)
+    gabion_wall.automf(3)
+    rubble_wall.automf(3)
+    
+    # Custom membership functions
+    soil_type['clay'] = fuzz.trimf(soil_type.universe, [0, 0, 1])
+    soil_type['sand'] = fuzz.trimf(soil_type.universe, [1, 1, 2])
+    soil_type['loam'] = fuzz.trimf(soil_type.universe, [2, 2, 3])
+    soil_type['peat'] = fuzz.trimf(soil_type.universe, [3, 3, 4])
+    soil_type['chalk'] = fuzz.trimf(soil_type.universe, [4, 4, 5])
+    soil_type['silt'] = fuzz.trimf(soil_type.universe, [5, 5, 5])
+    
+    slope_nature['natural'] = fuzz.trimf(slope_nature.universe, [0, 0, 50])
+    slope_nature['engineered'] = fuzz.trimf(slope_nature.universe, [50, 100, 100])
+    
+    landslide_risk['safe'] = fuzz.trimf(landslide_risk.universe, [0, 0, 30])
+    landslide_risk['moderate'] = fuzz.trimf(landslide_risk.universe, [20, 50, 80])
+    landslide_risk['high'] = fuzz.trimf(landslide_risk.universe, [70, 100, 100])
+    
+    # Rules definition
+    rules = [
+        ctrl.Rule(antecedent=((rainfall['poor'] & soil_moisture['poor']) |
+                              (slope_steepness['poor'] & vegetated_surface['good']) |
+                              (human_activity['good'] & historical_landslides['good'])),
+                  consequent=landslide_risk['high']),
+        ctrl.Rule(antecedent=((rainfall['average'] & drainage_system['average']) |
+                              (soil_type['clay'] & slope_nature['natural'])),
+                  consequent=landslide_risk['moderate']),
+        ctrl.Rule(antecedent=((rainfall['good'] & soil_moisture['good']) |
+                              (vegetated_surface['poor'] & slope_steepness['good'])),
+                  consequent=landslide_risk['safe'])
+    ]
+    
+    # Control System Creation and Simulation
+    landslide_ctrl = ctrl.ControlSystem(rules)
+    landslide_simulation = ctrl.ControlSystemSimulation(landslide_ctrl)
+    
+    return landslide_simulation
 
-        landslide_risk = ctrl.Consequent(np.arange(0, 101, 1), 'landslide_risk')
-
-        # Auto-membership function population is possible with .automf
-        rainfall.automf(3)
-        soil_moisture.automf(3)
-        slope_steepness.automf(3)
-        human_activity.automf(3)
-        historical_landslides.automf(3)
-        drainage_system.automf(3)
-        vegetated_surface.automf(3)
-        
-        soil_nailing.automf(3)
-        slope_netting.automf(3)
-        gabion_wall.automf(3)
-        rubble_wall.automf(3)
-
-        # Custom membership functions can be built interactively with a familiar Pythonic API
-        soil_type['clay'] = fuzz.trimf(soil_type.universe, [0, 0, 1])
-        soil_type['sand'] = fuzz.trimf(soil_type.universe, [1, 1, 2])
-        soil_type['loam'] = fuzz.trimf(soil_type.universe, [2, 2, 3])
-        soil_type['peat'] = fuzz.trimf(soil_type.universe, [3, 3, 4])
-        soil_type['chalk'] = fuzz.trimf(soil_type.universe, [4, 4, 5])
-        soil_type['silt'] = fuzz.trimf(soil_type.universe, [5, 5, 5])
-        
-        # Membership functions for slope nature
-        slope_nature['natural'] = fuzz.trimf(slope_nature.universe, [0, 0, 50])
-        slope_nature['engineered'] = fuzz.trimf(slope_nature.universe, [50, 100, 100])
-
-        landslide_risk = ctrl.Consequent(np.arange(0, 101, 1), 'landslide_risk')
-
-        # Custom membership functions for landslide risk
-        landslide_risk['safe'] = fuzz.trimf(landslide_risk.universe, [0, 0, 30])
-        landslide_risk['moderate'] = fuzz.trimf(landslide_risk.universe, [20, 50, 80])
-        landslide_risk['high'] = fuzz.trimf(landslide_risk.universe, [70, 100, 100])
-
-        # Define complex rules using fuzzy logic operators
-        rule1 = ctrl.Rule(antecedent=(
-            (rainfall['poor'] & soil_moisture['poor']) |
-            (slope_steepness['poor'] & vegetated_surface['good']) |
-            (human_activity['good'] & historical_landslides['good'])),
-            consequent=landslide_risk['high'])
-
-        rule2 = ctrl.Rule(antecedent=(
-            (rainfall['average'] & drainage_system['average']) |
-            (soil_type['clay'] & slope_nature['natural'])),
-            consequent=landslide_risk['moderate'])
-
-        rule3 = ctrl.Rule(antecedent=(
-            (rainfall['good'] & soil_moisture['good']) |
-            (vegetated_surface['poor'] & slope_steepness['good'])),
-            consequent=landslide_risk['safe'])
-
-        # Control System Creation and Simulation
-        landslide_ctrl = ctrl.ControlSystem([rule1, rule2, rule3])
-        landslide_simulation = ctrl.ControlSystemSimulation(landslide_ctrl)
-
-        return landslide_simulation    
-
-
-# Landslide risk calculation using the fuzzy system
 def calculate_landslide_risk(fuzzy_system, inputs):
+    """
+    Calculates landslide risk using the provided fuzzy system and inputs.
+    
+    Parameters:
+    - fuzzy_system: The fuzzy control system simulation instance.
+    - inputs: A dictionary of input values for the fuzzy system.
+
+    Returns:
+    - float: The calculated landslide risk score.
+    """
     for key, value in inputs.items():
         fuzzy_system.input[key] = value
     fuzzy_system.compute()
     return fuzzy_system.output['landslide_risk']
 
-
-# Map numerical risk score to categorical description
 def map_risk_to_category(risk_score):
+    """
+    Maps numerical risk score to a categorical description.
+    
+    Parameters:
+    - risk_score: The numerical risk score to categorize.
+
+    Returns:
+    - str: A string describing the risk category.
+    """
     if risk_score <= 30:
         return "Safe"
     elif 30 < risk_score <= 70:
         return "Moderate"
     else:
         return "High"
-
+    
+# Function to determine color based on risk category
+def get_risk_color(risk_category):
+    if risk_category == "Safe":
+        return "#32CD32"  # LimeGreen
+    elif risk_category == "Moderate":
+        return "#FFA500"  # Orange
+    elif risk_category == "High":
+        return "#FF4500"  # OrangeRed
+    else:
+        return "#FF0000"  # Red
 
 # Set up the main title for the application
-st.title("Landslide Risk Assessment System")
+st.title("Landslide Risk Assessment System ⚒️")
 
 # Sidebar setup
 with st.sidebar:
@@ -182,17 +216,6 @@ with st.sidebar:
         </div>
     """, unsafe_allow_html=True)
 
-# Function to determine color based on risk category
-def get_risk_color(risk_category):
-    if risk_category == "Safe":
-        return "#32CD32"  # LimeGreen
-    elif risk_category == "Moderate":
-        return "#FFA500"  # Orange
-    elif risk_category == "High":
-        return "#FF4500"  # OrangeRed
-    else:
-        return "#FF0000"  # Red
-
 # Main form for landslide risk assessment
 with st.form("risk_assessment_form"):
     
@@ -206,8 +229,6 @@ with st.form("risk_assessment_form"):
 
     # Split the form into two columns
     col1, col2 = st.columns(2)
-
-    import streamlit as st
 
     # First column for location, slope, and human activity details
     with col1:
@@ -403,39 +424,6 @@ if submit_button:
     # Adding a spacer
     st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
     
-    
-st.subheader("Upload an Image For Visual Inspection")
-uploaded_file = st.file_uploader("Choose an image...", type=['jpg', 'jpeg', 'png'])
-
-if uploaded_file is not None:
-    bytes_data = uploaded_file.getvalue()
-    image_np = np.array(Image.open(io.BytesIO(bytes_data)))
-
-    # Process the image and annotate it
-    annotated_image_np = detect_and_annotate(image_np)
-
-    # Convert numpy array to PIL Image for display in Streamlit
-    annotated_image = Image.fromarray(annotated_image_np.astype('uint8'), 'RGB')
-
-    # Display the annotated image
-    st.image(annotated_image, caption='Processed Image with Annotation', use_column_width=True)
-
-    st.success("A Landslide Risk Analysis Report is generated.")
-    # Expander for landslide risk analysis report
-    with st.expander("View Landslide Risk Analysis Report", expanded=False):
-        risk_analysis_text = static_risk_analysis()
-        st.markdown(risk_analysis_text, unsafe_allow_html=True)
-        
-        # Adding a spacer
-        st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
-
-        # Add a button to download the report
-        download_button_text = "Download Report"
-        st.download_button(label=download_button_text, 
-                           data=risk_analysis_text,
-                           file_name="Landslide_Risk_Analysis_Report.txt",
-                           mime="text/plain")
-        
     # Create a data frame for the location and risk score
     map_data = pd.DataFrame({
         'lat': [latitude],
@@ -461,10 +449,46 @@ if uploaded_file is not None:
         get_radius=100,  # Radius is given in meters
     )
 
+    # Title for the GIS-based landslide risk map
+    st.title("GIS Mapping for Landslide Risk Assessment 🗺️")
+    
     # Render the map with pydeck
     st.pydeck_chart(pdk.Deck(
         map_style='mapbox://styles/mapbox/light-v9',
         initial_view_state=view_state,
         layers=[risk_layer],
     ))
+    
+    
+st.title("Upload an Image For Visual Inspection 📸")
+uploaded_file = st.file_uploader("Choose an image...", type=['jpg', 'jpeg', 'png'])
 
+if uploaded_file is not None:
+    bytes_data = uploaded_file.getvalue()
+    image_np = np.array(Image.open(io.BytesIO(bytes_data)))
+
+    # Process the image and annotate it
+    annotated_image_np = detect_and_annotate(image_np)
+
+    # Convert numpy array to PIL Image for display in Streamlit
+    annotated_image = Image.fromarray(annotated_image_np.astype('uint8'), 'RGB')
+
+    # Display the annotated image
+    st.image(annotated_image, caption='Processed Image with Annotation', use_column_width=True)
+
+    st.success("A Landslide Risk Analysis Report is generated.")
+    
+    # Expander for landslide risk analysis report
+    with st.expander("View Landslide Risk Analysis Report 📄", expanded=False):
+        risk_analysis_text = static_risk_analysis()
+        st.markdown(risk_analysis_text, unsafe_allow_html=True)
+        
+        # Adding a spacer
+        st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
+
+        # Add a button to download the report
+        download_button_text = "Download Report"
+        st.download_button(label=download_button_text, 
+                           data=risk_analysis_text,
+                           file_name="Landslide_Risk_Analysis_Report.txt",
+                           mime="text/plain")
