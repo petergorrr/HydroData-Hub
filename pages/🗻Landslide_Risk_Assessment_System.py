@@ -14,6 +14,14 @@ import streamlit as st
 # Local application imports
 from image_processing import detect_and_annotate
 
+# Set page configuration with the globe emoji as the page icon
+st.set_page_config(
+    page_title="Landslide Risk Assessment System",
+    page_icon="⛰️",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 def get_download_link(report_content, filename="Landslide_Risk_Analysis_Report.txt"):
     bytes_report = report_content.encode()
     b64 = base64.b64encode(bytes_report).decode()
@@ -157,7 +165,6 @@ st.title("Landslide Risk Assessment System ⚒️")
 
 # Sidebar setup
 with st.sidebar:
-    
     # Display an image with description
     st.image("images/landslide.jpg", use_column_width=True)
     
@@ -194,12 +201,15 @@ with st.sidebar:
         <div class="data-sources">
             <div class="data-sources-header">Data Sources and References:</div>
             <ul>
-                <li><a href="https://weather.com/" class="source-link" target="_blank">Rainfall Data - The Weather Company</a></li>
+                <li><a href="https://publicinfobanjir.water.gov.my/hujan/data-hujan/?state=PNG&lang=en" class="source-link" target="_blank">Rainfall Data - Malaysia Flood Information</a></li>
                 <li><a href="https://www.usgs.gov/" class="source-link" target="_blank">Slope Steepness Data - USGS</a></li>
                 <li><a href="https://smap.jpl.nasa.gov/" class="source-link" target="_blank">Soil Moisture Data - NASA's SMAP satellite</a></li>
+                <li><a href="https://geotanih.doa.gov.my/" class="source-link" target="_blank">Soil Information - Department of Agriculture Malaysia</a></li>
+                <li><a href="https://www.met.gov.my/" class="source-link" target="_blank">Malaysia Meteorological Department</a></li>
             </ul>
         </div>
     """, unsafe_allow_html=True)
+
 
 # Main form for landslide risk assessment
 with st.form("risk_assessment_form"):

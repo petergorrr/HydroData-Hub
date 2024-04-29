@@ -178,7 +178,7 @@ with st.expander("Meet Our Team", expanded=False):
             st.markdown(f"[![LinkedIn](https://img.icons8.com/color/48/000000/linkedin.png)]({member['linkedin']})", unsafe_allow_html=True)
 
 # Gallery Header
-st.markdown("<h2 style='text-align: center; color:black;'>Gallery 🖼️</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center; color:black;'>Note + Gallery 📝🖼️</h2>", unsafe_allow_html=True)
 
 st.markdown("""
 <div style="
@@ -191,12 +191,12 @@ st.markdown("""
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 ">
     <p>
-        Throughout these five months, our team has gone through many experiences together. 
+        Throughout these five months, our team has gone through many experiences together while working for UNESCO Water Resilience Challenge. 
         These invaluable experiences, in various forms, have shaped our bond in many ways. 
         Be it bitterness 😥, sourness 🍋, frustration 😩, or a little bit of sadness sometimes 😢, 
         what we truly remember at the end of the day is an abundance of joy and happiness. 
         <br><br>Those memories will forever stay in our hearts.
-        <br><br><strong>Team Make Water OK - 2024 </strong>
+        <br><br><strong>Team Make Water OK (Malaysia) - 2024 </strong>
     </p>
 </div>
 """, unsafe_allow_html=True)
@@ -242,11 +242,11 @@ st.markdown("""
         <br><br>
         We also wish to express our sincere thanks to the <u><strong>PHBR Landslide Rehabilitation Team</strong></u> for their technical expertise and professional advice throughout this project. Their insights have been crucial in guiding our initiatives.
         <br><br>
-        Lastly, a special thanks to <u><strong>Dr. Abe Woo Sau Pinn</strong></u>, Senior Lecturer and Marine Biologist at Universiti Sains Malaysia (USM). Dr. Woo's moral support and assistance have been instrumental in helping us navigate the challenges of this project.
-        <br><br>
         Additionally, we are immensely thankful to <u><strong>Dr. Vazeerudeen Hameed</strong></u>, a senior lecturer at Asia Pacific University of Technology and Innovation, whose profound knowledge in the field of computing and invaluable help with the technical aspects of the application have been vital to our progress.
         <br><br>
-        We are immensely grateful to all who have contributed their time and expertise to make this project fruitful and productive.
+        Lastly, a special thanks to <u><strong>Dr. Abe Woo Sau Pinn</strong></u>, Senior Lecturer and Marine Biologist at Universiti Sains Malaysia (USM). Dr. Woo's moral support and assistance have been instrumental in helping us navigate the challenges of this project.
+        <br><br>
+        We are immensely grateful to all who have contributed their time and expertise to make this project fruitful.
     </p>
 </div>
 """, unsafe_allow_html=True)
