@@ -238,13 +238,15 @@ st.markdown("""
 ">
     <h2 style="text-align: center;">Acknowledgements</h2>
     <p>
-        We extend our deepest gratitude to <strong><u>Dr. Yang Kok Lee</u></strong>, Senior Project Officer at the Penang Hill Biosphere Reserve (PHBR) Office. Dr. Yang's unwavering support and assistance in organizing our stakeholder engagement trip and site visits have been invaluable to our project's success.
+        We extend our deepest gratitude to <u><strong>Dr. Yang Kok Lee</strong></u>, Senior Project Officer at the Penang Hill Biosphere Reserve (PHBR) Office. Dr. Yang's unwavering support and assistance in organizing our stakeholder engagement trip and site visits have been invaluable to our project's progress.
         <br><br>
-        We also wish to express our sincere thanks to the <strong><u>PHBR Landslide Rehabilitation Team</u></strong> for their technical expertise and professional advice throughout this project. Their insights have been crucial in guiding our initiatives.
+        We also wish to express our sincere thanks to the <u><strong>PHBR Landslide Rehabilitation Team</strong></u> for their technical expertise and professional advice throughout this project. Their insights have been crucial in guiding our initiatives.
         <br><br>
-        Lastly, a special thanks to <strong><u>Dr. Abe Woo Sau Pinn</u></strong>, Senior Lecturer and Marine Biologist at Universiti Sains Malaysia (USM). Dr. Woo's moral support and assistance have been instrumental in helping us navigate the challenges of this project.
+        Lastly, a special thanks to <u><strong>Dr. Abe Woo Sau Pinn</strong></u>, Senior Lecturer and Marine Biologist at Universiti Sains Malaysia (USM). Dr. Woo's moral support and assistance have been instrumental in helping us navigate the challenges of this project.
         <br><br>
-        We are immensely grateful to all who have contributed their time and expertise to make this project a success.
+        Additionally, we are immensely thankful to <u><strong>Dr. Vazeerudeen Hameed</strong></u>, a senior lecturer at Asia Pacific University of Technology and Innovation, whose profound knowledge in the field of computing and invaluable help with the technical aspects of the application have been vital to our progress.
+        <br><br>
+        We are immensely grateful to all who have contributed their time and expertise to make this project fruitful and productive.
     </p>
 </div>
 """, unsafe_allow_html=True)
