@@ -1,39 +1,40 @@
 import streamlit as st
+import os
 
 # Set page configuration with the globe emoji as the page icon
 st.set_page_config(
-    page_title="HydroDataHub",  # Set a title for the web page
-    page_icon="🌏",             # Set the emoji or path to an image file as the page icon
-    layout="wide",              # Optional: Use the "wide" layout for the app, which uses the full screen width
-    initial_sidebar_state="expanded"  # Optional: Expand the sidebar by default
+    page_title="HydroDataHub",
+    page_icon="🌏",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 # Define the member information with LinkedIn profiles
 members = [
     {
         "name": "Tan Peng Teck",
-        "major": "Artificial Intelligence",
+        "major": "Artificial Intelligence 🤖",
         "university": "Asia Pacific University of Technology and Innovation",
         "image": "images/Tan Peng Teck.jpg",
         "linkedin": "https://www.linkedin.com/in/peng-teck-tan-573a201b8/"
     },
     {
         "name": "Lim Heng Hoe",
-        "major": "Artificial Intelligence",
+        "major": "Artificial Intelligence 🤖 / Psychology 💭",
         "university": "Asia Pacific University of Technology and Innovation",
         "image": "images/Lim Heng Hoe.jpg",
         "linkedin": "https://www.linkedin.com/in/limhenghoe/"
     },
     {
         "name": "Agnes Saul",
-        "major": "Marine Biology",
+        "major": "Marine Biology 🐚",
         "university": "University Malaysia Terengganu",
         "image": "images/Agnes Saul.jpg",
         "linkedin": "https://www.linkedin.com/in/agnes-saul/"
     },
     {
         "name": "Peggy Lee Pooi Qi",
-        "major": "Marine Biology",
+        "major": "Marine Biology 🦭",
         "university": "University Malaysia Terengganu",
         "image": "images/Peggy Lee Pooi Qi.jpg",
         "linkedin": "https://www.linkedin.com/in/peggy-lee-47013422b/"
@@ -114,8 +115,20 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+
+# Directory containing the images
+image_directory = "images/casual_group_photos"
+
+# List to store the image paths
+image_paths = []
+
+# Loop through the directory and get all image paths
+for filename in os.listdir(image_directory):
+    if filename.endswith(".jpg"):  # Check for .jpg files
+        image_paths.append(os.path.join(image_directory, filename))
+
 # Centering the logo image using columns
-col1, col2, col3 = st.columns([1,2,1])
+col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.image("images/app_logo.jpg", use_column_width=True)
 
@@ -152,6 +165,7 @@ with st.sidebar:
 
 # Add the Meet Our Team section with LinkedIn profiles in an expander
 with st.expander("Meet Our Team", expanded=False):
+    st.markdown("<h2 style='font-size: 24px;'>Who are We?😎</h2>", unsafe_allow_html=True)
     for member in members:
         col1, col2, col3 = st.columns([1, 3, 1])
         with col1:
@@ -161,12 +175,41 @@ with st.expander("Meet Our Team", expanded=False):
             st.markdown(f"**Major:** {member['major']}")
             st.markdown(f"**University:** {member['university']}")
         with col3:
-            # Add a clickable LinkedIn icon that leads to the member's LinkedIn profile
             st.markdown(f"[![LinkedIn](https://img.icons8.com/color/48/000000/linkedin.png)]({member['linkedin']})", unsafe_allow_html=True)
-    st.image("images/group_photo.jpg", use_column_width=True)
 
-# Nature Walk / Heritage Walk video
-st.header("Nature Walk / Heritage Walk Trip")
+# Gallery Header
+st.markdown("<h2 style='text-align: center; color:black;'>Gallery 🖼️</h2>", unsafe_allow_html=True)
+
+st.markdown("""
+<div style="
+    border: 2px solid black;
+    border-radius: 10px;
+    background-color: #f4f4f4;
+    margin: 10px;
+    padding: 20px;
+    text-align: justify;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+">
+    <p>
+        Throughout these five months, our team has gone through many experiences together. 
+        These invaluable experiences, in various forms, have shaped our bond in many ways. 
+        Be it bitterness 😥, sourness 🍋, frustration 😩, or a little bit of sadness sometimes 😢, 
+        what we truly remember at the end of the day is an abundance of joy and happiness. 
+        <br><br>Those memories will forever stay in our hearts.
+        <br><br><strong>Team Make Water OK - 2024 </strong>
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+
+# Define the number of columns you want to show the images in.
+columns = st.columns(3)
+for index, image_path in enumerate(image_paths):
+    with columns[index % 4]:  # Modulo the number of columns to create a grid
+        st.image(image_path)
+        
+# Nature Walk / Heritage Walk video section
+st.markdown('<h1 class="header">Nature Walk / Heritage Walk Trip</h1>', unsafe_allow_html=True)
 st.markdown("""
 <div class="video-description">
     <p>This video captures our nature walk and heritage walk at Penang Hill, highlighting our interactions with the environment and efforts to integrate these experiences into our project.</p>
@@ -174,11 +217,34 @@ st.markdown("""
 """, unsafe_allow_html=True)
 st.video('https://www.youtube.com/watch?v=uRb5tdTx1eE')
 
-# Stakeholder Engagement Trip video
-st.header("Stakeholder Engagement Trip at Penang Hill")
+# Stakeholder Engagement Trip video section
+st.markdown('<h1 class="header">Stakeholder Engagement Trip at Penang Hill</h1>', unsafe_allow_html=True)
 st.markdown("""
 <div class="video-description">
-    We also visited the Penang Hill Biosphere Reserve office and met with the personnel there to gain insights that would help improve our prototype.</p>
+    <p>We visited the Penang Hill Biosphere Reserve office and met with the personnel there to gain insights that would help improve our prototype.</p>
 </div>
 """, unsafe_allow_html=True)
 st.video('https://www.youtube.com/watch?v=kGcKlLym9J0')
+
+st.markdown("""
+<div style="
+    border: 2px solid blue;
+    border-radius: 10px;
+    background-color: #f4f4f4;
+    margin: 10px;
+    padding: 20px;
+    text-align: justify;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+">
+    <h2 style="text-align: center;">Acknowledgements</h2>
+    <p>
+        We extend our deepest gratitude to <strong><u>Dr. Yang Kok Lee</u></strong>, Senior Project Officer at the Penang Hill Biosphere Reserve (PHBR) Office. Dr. Yang's unwavering support and assistance in organizing our stakeholder engagement trip and site visits have been invaluable to our project's success.
+        <br><br>
+        We also wish to express our sincere thanks to the <strong><u>PHBR Landslide Rehabilitation Team</u></strong> for their technical expertise and professional advice throughout this project. Their insights have been crucial in guiding our initiatives.
+        <br><br>
+        Lastly, a special thanks to <strong><u>Dr. Abe Woo Sau Pinn</u></strong>, Senior Lecturer and Marine Biologist at Universiti Sains Malaysia (USM). Dr. Woo's moral support and assistance have been instrumental in helping us navigate the challenges of this project.
+        <br><br>
+        We are immensely grateful to all who have contributed their time and expertise to make this project a success.
+    </p>
+</div>
+""", unsafe_allow_html=True)
