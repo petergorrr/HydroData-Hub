@@ -1,10 +1,8 @@
-altair==5.3.0
 matplotlib==3.8.3
 numpy==1.26.4
 opencv_python==4.9.0.80
 pandas==2.2.2
 Pillow==10.3.0
-plotly==5.20.0
 pydeck==0.8.1b0
 scikit_fuzzy==0.4.2
 scikit_learn==1.4.1.post1

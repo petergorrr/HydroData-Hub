@@ -233,14 +233,18 @@ def Leakage_Info_Function():
     container = st.container(border=True)
 
     with container:
-        st.markdown('### ⚠️Leakage Warning⚠️')
+        st.markdown("""
+    <h3 style="text-align: center;">
+        ⚠️Alert Warning⚠️
+    </h3>
+    """, unsafe_allow_html=True)
         # Create a dictionary with the data
         Leakage_Data = pd.DataFrame(
-            {"Area": [["Area E"], ["Area W"]],
-            "Abnormal": [["4/4"], ["2/4"]],
+            {"Area": [["Area E"], ["Area W"],["Area N"],["Area S"]],
+            "Abnormalities": [["4/4"], ["2/4"],["0/4"],["0/4"]],
             "Indicators": [
                 ["🚨 Unusual Water Usage", "🚨 Acoustic Leak Detection", "🚨 Abnormal Water Temperature", "🚨 Abnormal Water Pressure"],
-                ["🚨 Abnormal Water Temperature", "🚨 Abnormal Water Pressure"],],})
+                ["🚨 Abnormal Water Temperature", "🚨 Abnormal Water Pressure"],["All Good!"],["All Good!"]],})
 
         st.data_editor(Leakage_Data, 
                         column_config={"Leakage":st.column_config.ListColumn(
