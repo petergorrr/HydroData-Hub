@@ -138,8 +138,6 @@ def Area_Map():
         </div>
         """, unsafe_allow_html=True)
 
-
-
 def Combined(selected_month, dataset_2, dataset_3):
     
     container = st.container(border=True)
@@ -188,8 +186,6 @@ def Combined(selected_month, dataset_2, dataset_3):
 
         # Display the bar chart
         st.pyplot(fig)
-
-
             
     # Component 2: Reservoir Data Function
     with col2:
@@ -228,6 +224,54 @@ def Combined(selected_month, dataset_2, dataset_3):
 )
 
 
+def display_supply_demand_ratio(selected_month, dataset):
+    
+    # Setup a Streamlit container for displaying the results.
+    st.title('Water Supply/Demand Ratio')
+
+    # Use HTML and CSS for styling markdown content
+    st.markdown(f"""
+        <style>
+            .info {{
+                font-size: 16px;
+                font-weight: bold;
+                color: #333333;  /* For clear readability */
+                background-color: #f9f9f9;  /* Soft neutral background */
+                padding: 10px;
+                border: 2px solid #2c3e50;  /* Contrasting dark border */
+                border-radius: 10px;
+                box-shadow: 2px 2px 12px rgba(0,0,0,0.1);  /* Adds depth */
+            }}
+            .header {{
+                color: #d35400;  /* Emphasizing the month with a warm orange */
+                font-size: 16px;
+                margin-bottom: 0;
+            }}
+        </style>
+        <div class='info'>
+            Displaying the water supply for <span class='header'>{selected_month}</span> as a percentage of the highest recorded demand for Penang Hill. This comparison provides insight into the current supply levels relative to historical peaks:
+            <ul>
+                <li><b>100%:</b> Current supply equals the historical peak.</li>
+                <li><b>Below 100%:</b> Current supply is less than the peak, which indicates it's below the maximum recorded.</li>
+            </ul>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    st.write("")
+
+    # Iterate through each row in the dataset to process and display the supply for each component.
+    for index, row in dataset.iterrows():
+        component = row['Component']
+        supply_percentage = row[f'{selected_month} % of Max Demand']
+        supply = row[selected_month]
+
+        # Display the component name, progress bar, and supply percentage.
+        st.markdown(f"**{component}**")
+        st.progress(supply_percentage / 100)
+        st.caption(f"{supply:,.0f} L - {supply_percentage:.2f}% of highest recorded demand ({row['Risk Assessment']})")
+    st.write("---") 
+
+
 
 def Leakage_Info_Function():
     container = st.container(border=True)
@@ -252,35 +296,12 @@ def Leakage_Info_Function():
                             width=670,
                             hide_index=True)    
     
-    with st.popover("4 Leakage Indicators", help=None, disabled=False, use_container_width=True):
-                st.markdown("🚨 Unusual Water Usage ***(Monitor unusual spikes or drops in water consumption)***")
-                st.markdown("🚨 Acoustic Leak Detection ***(Sound sensors detect unique noise patterns caused by escaping water)***")
-                st.markdown("🚨 Abnormal Water Temperature ***(Monitor deviations from expected water temperature ranges)***")
-                st.markdown("🚨 Abnormal Water Pressure ***(Detect Unexplained sudden increases and drops in water pressure)***")
+    with st.popover("4 Signs of Water Leakage", help=None, disabled=False, use_container_width=True):
+        st.markdown("🚨 Unusual Water Usage : ***Keep an eye on unexpected increases or decreases in water consumption.***")
+        st.markdown("🚨 Acoustic Leak Detection : ***Special sensors detect unique sounds made by leaking water.***")
+        st.markdown("🚨 Abnormal Water Temperature : ***Look out for unusual changes in water temperature.***")
+        st.markdown("🚨 Abnormal Water Pressure : ***Detect sudden and unexplained changes in water pressure.***")
 
-def Compare_Water_Level(selected_month, dataset_4):
-    container = st.container(border=True)
-
-    with container:
-        st.markdown('### Water Supply/Demand')
-        
-        dataset_4.set_index("Component", inplace=True)
-
-        # Filter the DataFrame to include only the selected month's data
-        selected_month_data_compare = dataset_4[selected_month]
-
-        # Display the filtered data
-        st.data_editor(selected_month_data_compare,
-                        column_config={
-                            selected_month: st.column_config.ProgressColumn(
-                                "Water Supply/Demand",
-                                help="The Water Usage is in Litre",
-                                format="%f L",
-                                min_value=0,
-                                max_value=100000000,),},
-                                width = 670,
-                                disabled=True,
-                                hide_index=False)
 
 # Display the current year in an aesthetic way
 st.markdown("### 📅 Year: 2023")
@@ -296,58 +317,38 @@ if __name__ == "__main__":
     V_Metric_Data_Function(option, V_Metric_Data)
     Area_Map()
     Combined(option, V_Choropleth_Data, V_Reservoir_Data)
-    Compare_Water_Level(option, V_Compare_Data)
+    display_supply_demand_ratio(option, V_Compare_Data)
     Leakage_Info_Function()
 
 # Title for the Forecasting section
-st.title("Forecasting")
+st.title("Monthly Water Watch")
 
-def load_model():
-    """Function to load the trained model and label encoders from a pickle file."""
-    with open("water_model.pkl", "rb") as file:
-        data = pickle.load(file)
-    return data
+# Load the dataset
+data = pd.read_csv('water_data.csv')
 
-# Load the model and label encoders
-data = load_model()
-regressor = data["model"]
-le_Month = data["le_Month"]
-le_Area = data["le_Area"]
-le_Weather = data["le_Weather"]
-le_Festival = data["le_Festival"]
+# Define the correct order of the months
+month_order = ["January", "February", "March", "April", "May", "June", 
+               "July", "August", "September", "October", "November", "December"]
 
-def display_forecast_interface():
-    """Function to display the prediction interface and handle forecasting."""
-    st.write("Input features for forecasting:")
+# Ensure the 'Month' column is a categorical type with a defined order
+data['Month'] = pd.Categorical(data['Month'], categories=month_order, ordered=True)
 
-    # Define options for dropdown selection
-    months = ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
-    areas = ("Area N", "Area E", "Area S", "Area W")
-    weather_conditions = ("Sunny", "Cloudy", "Rainy")
-    festival_options = ("Yes", "No")
+# Calculate the monthly average water usage
+monthly_avg = data.groupby('Month')['Avg_Usage_Litre'].mean().reset_index()
 
-    # User input for forecasting
-    selected_month = st.selectbox("Month", months)
-    selected_area = st.selectbox("Area", areas)
-    selected_weather = st.selectbox("Weather", weather_conditions)
-    selected_festival = st.selectbox("Festival", festival_options)
-    no_visitor_area = st.text_input("Number of visitors")
-    no_residence_area = st.text_input("Number of residences")
+# User input: select a month
+selected_month = st.selectbox("Select a Month to Display Forecasting and Advice", monthly_avg['Month'])
 
-    if st.button("Calculate"):
-        # Prepare input data for the prediction model
-        input_features = np.array([[selected_month, selected_area, selected_weather, selected_festival, no_visitor_area, no_residence_area]])
-        input_features[:, 0] = le_Month.transform([input_features[:, 0][0]])
-        input_features[:, 1] = le_Area.transform([input_features[:, 1][0]])
-        input_features[:, 2] = le_Weather.transform([input_features[:, 2][0]])
-        input_features[:, 3] = le_Festival.transform([input_features[:, 3][0]])
-        input_features = input_features.astype(float)
+# Find the average for the selected month
+selected_month_avg = monthly_avg[monthly_avg['Month'] == selected_month]['Avg_Usage_Litre'].iloc[0]
 
-        # Predict using the loaded model
-        estimated_water_usage = regressor.predict(input_features)
+# Display the average water usage
+st.markdown(f"For {selected_month}, the historical average water usage is <span style='color: black; font-weight: bold;'>{selected_month_avg:,.0f} litres</span>.", unsafe_allow_html=True)
 
-        # Display the prediction result
-        st.subheader(f"The estimated water usage is {int(estimated_water_usage[0]):,} Litre")
-
-# Execute the forecast interface function
-display_forecast_interface()
+# Provide recommendations based on the average
+if selected_month_avg > 3000000:
+    st.success(f"Warning: High water usage expected in {selected_month}. Consider implementing water-saving strategies and closely monitoring usage.")
+elif selected_month_avg > 2000000:
+    st.warning(f"Note: Moderate water usage expected in {selected_month}. It's a good time to check for any inefficiencies in water use.")
+else:
+    st.info(f"Low water usage expected in {selected_month}. This is typically a lower demand period.")

@@ -9,17 +9,15 @@ df = pd.read_csv("water_data.csv")
 # Initialize Label Encoders
 le_Month = LabelEncoder()
 le_Area = LabelEncoder()
-le_Weather = LabelEncoder()
 le_Festival = LabelEncoder()
 
 # Encode categorical variables
 df['Month'] = le_Month.fit_transform(df['Month'])
 df['Area'] = le_Area.fit_transform(df['Area'])
-df['Weather'] = le_Weather.fit_transform(df['Weather'])
 df['Festival'] = le_Festival.fit_transform(df['Festival'])
 
 # Selected features for the model
-selected_features = ["Month", "Area", "Weather", "Festival", "No_Visitor_Area", "No_Residence_Area"]
+selected_features = ["Month", "Area", "Festival", "No_Visitor_Area", "No_Residence_Area"]
 
 # Separate features (X) and target variable (y)
 X = df[selected_features]
@@ -37,7 +35,6 @@ model_data = {
     "model": random_forest_reg,
     "le_Month": le_Month,
     "le_Area": le_Area,
-    "le_Weather": le_Weather,
     "le_Festival": le_Festival
 }
 

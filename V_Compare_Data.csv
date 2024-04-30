@@ -1,3 +1,2 @@
-Component,January,February,March,April,May,June,July,August,September,October,November,December
-Air Itam + Tiger Hill,38947000,89713000,63760000,88644000,96154000,41125000,86422000,23846000,96163000,54061000,70233000,37852000
-Penang Hill (4 Areas),7335813,11733720,10410919,7866294,18744508,12040100,11407830,10037701,7450584,16469969,16772143,15842621
+Component,January,February,March,April,May,June,July,August,September,October,November,December,Total,Max Demand,January % of Max Demand,February % of Max Demand,March % of Max Demand,April % of Max Demand,May % of Max Demand,June % of Max Demand,July % of Max Demand,August % of Max Demand,September % of Max Demand,October % of Max Demand,November % of Max Demand,December % of Max Demand,Risk Assessment
+"Penang Hill (Area N, Area E, Area S, Area W)",7335813.0,11733720.0,10410919.0,7866294.0,18744508.0,12040100.0,11407830.0,10037701.0,7450584.0,16469969.0,16772143.0,15842621.0,146112202.0,18744508.0,39.1357991364724,62.598175422902536,55.54116971221651,41.965860080189884,100.0,64.23268084710465,60.859586178522264,53.550090511844864,39.748090480689065,87.86557107820595,89.47763793000063,84.5187347675383,Low Risk

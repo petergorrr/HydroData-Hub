@@ -194,7 +194,7 @@ st.markdown("""
         Throughout these five months, our team has gone through many experiences together while working for UNESCO Water Resilience Challenge. 
         These invaluable experiences, in various forms, have shaped our bond in many ways. 
         Be it bitterness 😥, sourness 🍋, frustration 😩, or a little bit of sadness sometimes 😢, 
-        what we truly remember at the end of the day is an abundance of joy and happiness. 
+        what we truly remember at the end of the day is only an abundance of joy and happiness. 
         <br><br>Those memories will forever stay in our hearts.
         <br><br><strong>Team Make Water OK (Malaysia) - 2024 </strong>
     </p>
