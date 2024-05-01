@@ -346,7 +346,6 @@ selected_month_avg = monthly_avg[monthly_avg['Month'] == selected_month]['Avg_Us
 st.markdown(f"For {selected_month}, the historical average water usage is <span style='color: black; font-weight: bold;'>{selected_month_avg:,.0f} litres</span>.", unsafe_allow_html=True)
 
 # Provide recommendations based on the average
-
 if selected_month=="January":
     st.success(f"🎉 Warning: Expect increased water consumption in {selected_month} due to the Chinese New Year Festival. Implement water-saving tactics and monitor usage closely to manage the surge.")
 elif selected_month=="April":
