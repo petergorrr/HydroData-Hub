@@ -346,9 +346,18 @@ selected_month_avg = monthly_avg[monthly_avg['Month'] == selected_month]['Avg_Us
 st.markdown(f"For {selected_month}, the historical average water usage is <span style='color: black; font-weight: bold;'>{selected_month_avg:,.0f} litres</span>.", unsafe_allow_html=True)
 
 # Provide recommendations based on the average
-if selected_month_avg > 3000000:
-    st.success(f"Warning: High water usage expected in {selected_month}. Consider implementing water-saving strategies and closely monitoring usage.")
+
+if selected_month=="January":
+    st.success(f"🎉 Warning: Expect increased water consumption in {selected_month} due to the Chinese New Year Festival. Implement water-saving tactics and monitor usage closely to manage the surge.")
+elif selected_month=="April":
+    st.success(f"🌙 Warning: Anticipate heightened water usage in {selected_month} for the Hari Raya Festival. Adopt proactive water-saving measures and keep a vigilant watch on consumption levels.")
+elif selected_month=="December":
+    st.success(f"🎄 Warning: Prepare for elevated water usage during {selected_month} owing to the Christmas and holiday celebrations. Engage in strategic water conservation and maintain strict usage oversight.")
+elif selected_month=="November":
+    st.success(f"🪔 Warning: Increased water usage likely in {selected_month} during the Deepavali festival. Prioritize implementing water conservation strategies and closely monitor water consumption.")
+elif selected_month_avg > 3000000:
+    st.success(f"⚠️ Warning: High water usage expected in {selected_month}. Consider implementing water-saving strategies and closely monitoring usage.")
 elif selected_month_avg > 2000000:
-    st.warning(f"Note: Moderate water usage expected in {selected_month}. It's a good time to check for any inefficiencies in water use.")
+    st.warning(f"🔍 Note: Moderate water usage expected in {selected_month}. It's a good time to check for any inefficiencies in water use.")
 else:
-    st.info(f"Low water usage expected in {selected_month}. This is typically a lower demand period.")
+    st.info(f"💧 Low water usage expected in {selected_month}. This is typically a lower demand period.")
