@@ -244,6 +244,8 @@ st.markdown("""
         <br><br>
         Additionally, we are immensely thankful to <u><strong>Dr. Vazeerudeen Hameed</strong></u>, a senior lecturer at Asia Pacific University of Technology and Innovation, whose profound knowledge in the field of computing and invaluable help with the technical aspects of the application have been vital to our progress.
         <br><br>
+        A special acknowledgement goes to <u><strong>Venus Khor Zhi Zhong</strong></u>, Environmental Officer from Green Acres Studio Sdn. Bhd., who has been immensely helpful by sharing his experience and insights from his fieldwork in site inspections. His contributions have enhanced our understanding and implementation of practical measures on the ground.
+        <br><br>
         Lastly, a special thanks to <u><strong>Dr. Abe Woo Sau Pinn</strong></u>, Senior Lecturer and Marine Biologist at Universiti Sains Malaysia (USM). Dr. Woo's moral support and assistance have been instrumental in helping us navigate the challenges of this project.
         <br><br>
         We are immensely grateful to all who have contributed their time and expertise to make this project fruitful.
