@@ -242,7 +242,7 @@ st.markdown("""
         <br><br>
         We also wish to express our sincere thanks to the <u><strong>PHBR Landslide Rehabilitation Team</strong></u> for their technical expertise and professional advice throughout this project. Their insights have been crucial in guiding our initiatives.
         <br><br>
-        Additionally, we are immensely thankful to <u><strong>Dr. Vazeerudeen Hameed</strong></u>, a senior lecturer at Asia Pacific University of Technology and Innovation, whose profound knowledge in the field of computing and invaluable help with the technical aspects of the application have been vital to our progress.
+        Additionally, we are immensely thankful to <u><strong>Dr. Vazeerudeen Hameed</strong></u>, a senior lecturer and <u><strong>Assoc. Prof. Dr. Muhammad Ehsan Rana</strong></u>, an Associate Professor at Asia Pacific University of Technology and Innovation, whose profound knowledge in the field of computing and invaluable help with the technical aspects of the application have been vital to our progress.
         <br><br>
         A special acknowledgement goes to <u><strong>Venus Khor Zhi Zhong</strong></u>, Environmental Officer from Green Acres Studio Sdn. Bhd., who has been immensely helpful by sharing his experience and insights from his fieldwork in site inspections. His contributions have enhanced our understanding and implementation of practical measures on the ground.
         <br><br>
