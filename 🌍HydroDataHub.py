@@ -115,7 +115,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-
 # Directory containing the images
 image_directory = "images/casual_group_photos"
 
@@ -201,13 +200,12 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-
-# Define the number of columns you want to show the images in.
+# Define the number of columns you want to show the images in
 columns = st.columns(3)
 for index, image_path in enumerate(image_paths):
-    with columns[index % 4]:  # Modulo the number of columns to create a grid
+    with columns[index % 3]:  # Modulo the number of columns to create a grid
         st.image(image_path)
-        
+
 # Nature Walk / Heritage Walk video section
 st.markdown('<h1 class="header">Nature Walk / Heritage Walk Trip</h1>', unsafe_allow_html=True)
 st.markdown("""
@@ -242,7 +240,7 @@ st.markdown("""
         <br><br>
         We also wish to express our sincere thanks to the <u><strong>PHBR Landslide Rehabilitation Team</strong></u> for their technical expertise and professional advice throughout this project. Their insights have been crucial in guiding our initiatives.
         <br><br>
-        Additionally, we are immensely thankful to <u><strong>Dr. Vazeerudeen Hameed</strong></u>, a senior lecturer and <u><strong>Assoc. Prof. Dr. Muhammad Ehsan Rana</strong></u>, an Associate Professor at Asia Pacific University of Technology and Innovation, whose profound knowledge in the field of computing and invaluable help with the technical aspects of the application have been vital to our progress.
+        Additionally, we are immensely thankful to <u><strong>Dr. Vazeerudeen Hameed</strong></u> and <u><strong>Assoc. Prof. Dr. Muhammad Ehsan Rana</strong></u> from Asia Pacific University of Technology and Innovation, whose profound knowledge in the field of computing and invaluable help with the technical aspects of the application have been vital to our progress.
         <br><br>
         A special acknowledgement goes to <u><strong>Venus Khor Zhi Zhong</strong></u>, Environmental Officer from Green Acres Studio Sdn. Bhd., who has been immensely helpful by sharing his experience and insights from his fieldwork in site inspections. His contributions have enhanced our understanding and implementation of practical measures on the ground.
         <br><br>
