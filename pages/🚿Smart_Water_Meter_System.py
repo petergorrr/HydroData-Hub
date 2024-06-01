@@ -1,7 +1,6 @@
 import streamlit as st
 import numpy as np
 import pandas as pd
-import pickle
 import matplotlib.pyplot as plt
 from streamlit_image_comparison import image_comparison
 
@@ -14,22 +13,15 @@ st.write("---")  # Horizontal rule for visual separation
 
 # Sidebar setup
 with st.sidebar:
-    # Display an image with description
     st.image("images/smart_water_meter.jpg", use_column_width=True)
-    
-    # Information section about the app usage
     st.info(
         "This app uses a smart water meter system with comprehensive visualization tools "
         "and an advanced warning system. It helps authorities save water and manage resources better."
     )
-    
-    # Legal and copyright information
     st.markdown("---")
     st.write("This application is for authorized use only.")
     st.markdown("Copyright © Make Water OK Malaysia")
     st.markdown("---")
-    
-    # Data sources and references section
     st.markdown("""
         <style>
             .data-sources {
@@ -57,54 +49,45 @@ with st.sidebar:
         </div>
     """, unsafe_allow_html=True)
 
-
-#----VISUALIZE--------------------------------------------------------------------
+# Load datasets
 V_Metric_Data = pd.read_csv('V_Metric_Data.csv')
 V_Choropleth_Data = pd.read_csv('V_Choropleth_Data.csv')
 V_Reservoir_Data = pd.read_csv('V_Reservoir_Data.csv')
 V_Compare_Data = pd.read_csv('V_Compare_Data.csv')
+data = pd.read_csv('water_data.csv')
 
-def V_Metric_Data_Function(selected_month, dataset_1):
-    container = st.container(border=True)
-    
+def V_Metric_Data_Function(selected_month, dataset):
+    container = st.container()
     with container:
         col1, col2, col3 = st.columns(3)
+        selected_month_data = dataset[dataset["Metric_Month"] == selected_month]
 
         with col1:
-            selected_month_data = dataset_1[dataset_1["Metric_Month"] == selected_month]
             avg_temperature = selected_month_data["Metric_Avg_Temperature_Degree_Celsius"].values[0]
             avg_temperature_delta = selected_month_data["Metric_Avg_Temperature_Degree_Celsius_Delta"].values[0]
-            st.metric(label="Avg Temperature🌡️", value = str(avg_temperature) + " °C", delta= str(avg_temperature_delta) + "°C from last month", delta_color="inverse", help=None, label_visibility="visible")
+            st.metric("Avg Temperature🌡️", f"{avg_temperature} °C", f"{avg_temperature_delta}°C from last month", delta_color="inverse")
 
         with col2:
             avg_rainfall = selected_month_data["Metric_Avg_Rainfall_Mm"].values[0]
             avg_rainfall_delta = selected_month_data["Metric_Avg_Rainfall_Mm_Delta"].values[0]
-            st.metric(label="Avg Rainfall🌧️", value = str(avg_rainfall) + " mm", delta= str(avg_rainfall_delta) + "mm from last month", delta_color="normal", help=None, label_visibility="visible")
+            st.metric("Avg Rainfall🌧️", f"{avg_rainfall} mm", f"{avg_rainfall_delta}mm from last month", delta_color="normal")
 
         with col3:
             avg_humidity = selected_month_data["Metric_Avg_Humidity_Percent"].values[0]
             avg_humidity_delta = selected_month_data["Metric_Avg_Humidity_Percent_Delta"].values[0]
-            st.metric(label="Avg Humidity💧", value = str(avg_humidity) + " %", delta=str(avg_humidity_delta) + "% from last month", delta_color="normal", help=None, label_visibility="visible")
-
+            st.metric("Avg Humidity💧", f"{avg_humidity} %", f"{avg_humidity_delta}% from last month", delta_color="normal")
 
 def Area_Map():
-
     with st.container():
-        st.markdown("""
-    <h3 style="text-align: center;">
-        Area Map of Penang Hill Biosphere Reserve
-    </h3>
-    """, unsafe_allow_html=True)
-
+        st.markdown("<h3 style='text-align: center;'>Area Map of Penang Hill Biosphere Reserve</h3>", unsafe_allow_html=True)
         image_comparison(img1="slide2.png", img2="slide1.png", width=670)
     
     with st.expander("Map Legend"):
-        # Including custom styles for better typography and a solid border box
         st.markdown("""
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
             .info-box {
-                border: 2px solid ;
+                border: 2px solid;
                 border-radius: 10px;
                 padding: 15px;
                 font-family: 'Nunito', sans-serif;
@@ -128,87 +111,57 @@ def Area_Map():
         </style>
         <div class='info-box'>
             <p><span class='icon'>📍</span><span class='area'>Area N:</span>
-                <span class='location' title='Click for more info'>Bypath D restroom, Sri Aruloli Thirumurugan Temple, Earthquake & Typhoon Pavilion, Toy Museum & 5D, Bellevue Hotel</span></p>
+                <span class='location'>Bypath D restroom, Sri Aruloli Thirumurugan Temple, Earthquake & Typhoon Pavilion, Toy Museum & 5D, Bellevue Hotel</span></p>
             <p><span class='icon'>📍</span><span class='area'>Area E:</span>
-                <span class='location' title='Click for more info'>Penang Hill Gallery@Edgecliff, Henna Art & Spa</span></p>
+                <span class='location'>Penang Hill Gallery@Edgecliff, Henna Art & Spa</span></p>
             <p><span class='icon'>📍</span><span class='area'>Area S:</span>
-                <span class='location' title='Click for more info'>TeddyVille Museum, Astaka(Cliff Café), David Brown’s Restaurant, Kota Dine & Coffee and The Loaf Railway Café, Little Village, Penang Hill Kacang Putih</span></p>
+                <span class='location'>TeddyVille Museum, Astaka(Cliff Café), David Brown’s Restaurant, Kota Dine & Coffee and The Loaf Railway Café, Little Village, Penang Hill Kacang Putih</span></p>
             <p><span class='icon'>📍</span><span class='area'>Area W:</span>
-                <span class='location' title='Click for more info'>Monkey Cup Garden, Gate House Bel Retiro, Penang Hill mosque, Hillside retreat</span></p>
+                <span class='location'>Monkey Cup Garden, Gate House Bel Retiro, Penang Hill mosque, Hillside retreat</span></p>
         </div>
         """, unsafe_allow_html=True)
 
-def Combined(selected_month, dataset_2, dataset_3):
-    
-    container = st.container(border=True)
-
+def Combined(selected_month, choropleth_data, reservoir_data):
+    container = st.container()
     with container:
-        # Split the container into two columns
         col1, col2 = st.columns((5, 5))
 
-    # Component 1: Choropleth Data Function
     with col1:
         st.markdown('### Area Water Usage')
+        choropleth_data.set_index('Area', inplace=True)
+        selected_month_data_choropleth = choropleth_data[[selected_month]].sort_values(by=selected_month)
 
-        # Set the "Area" column as the index if it isn't already
-        if dataset_2.index.name != 'Area':
-            dataset_2 = dataset_2.set_index('Area')
-
-        # Filter the DataFrame to include only the selected month's data
-        selected_month_data_choropleth = dataset_2[[selected_month]]
-
-        # Sort values for better visualization
-        selected_month_data_choropleth = selected_month_data_choropleth.sort_values(by=selected_month)
-
-        # Plotting with Matplotlib
-        plt.style.use('ggplot')  # Use ggplot style for more visually appealing plots
-        fig, ax = plt.subplots(figsize=(10, 6))  # Set figure size
+        plt.style.use('ggplot')
+        fig, ax = plt.subplots(figsize=(10, 6))
         bars = ax.barh(selected_month_data_choropleth.index, selected_month_data_choropleth[selected_month])
         ax.set_xlabel('Water Usage (Litre)', fontsize=22, fontweight='bold')
         ax.set_title('Water Usage For Selected Month', fontsize=22, fontweight='bold')
-        ax.spines['top'].set_visible(False)  # Remove top spine
-        ax.spines['right'].set_visible(False)  # Remove right spine
-        ax.spines['bottom'].set_color('#DDDDDD')  # Lighten bottom spine
-        ax.spines['left'].set_color('#DDDDDD')  # Lighten left spine
-        ax.tick_params(axis='y', which='major', labelsize=22)  # Adjust y-axis label size
-        ax.tick_params(axis='x', which='major', labelsize=22)  # Adjust x-axis label size
-
-        # Add value labels to each bar
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['bottom'].set_color('#DDDDDD')
+        ax.spines['left'].set_color('#DDDDDD')
+        ax.tick_params(axis='y', which='major', labelsize=22)
+        ax.tick_params(axis='x', which='major', labelsize=22)
         for bar in bars:
-            ax.text(
-                bar.get_width(),  # Get the horizontal position of the bar end
-                bar.get_y() + bar.get_height() / 2,  # Get the vertical position of the bar center
-                f' {bar.get_width():.0f} L',  # The label text
-                va='center',  # Center alignment
-                ha='left',  # Left alignment relative to the bar end
-                fontsize=10
-            )
-
-        # Display the bar chart
+            ax.text(bar.get_width(), bar.get_y() + bar.get_height() / 2, f' {bar.get_width():.0f} L', va='center', ha='left', fontsize=10)
         st.pyplot(fig)
             
-    # Component 2: Reservoir Data Function
     with col2:
         st.markdown('### Reservoir Water Level')
-
-        # Set the "Reservoir" column as the index
-        dataset_3.set_index("Reservoir", inplace=True)
-
-        # Filter the DataFrame to include only the selected month's data
-        selected_month_data_reservoir = dataset_3[selected_month]
-
-        # Display the filtered data
+        reservoir_data.set_index("Reservoir", inplace=True)
+        selected_month_data_reservoir = reservoir_data[selected_month]
         st.data_editor(selected_month_data_reservoir,
-                        column_config={
-                            selected_month: st.column_config.ProgressColumn(
-                                "Water Level (%)",
-                                format="%f",
-                                width="medium",
-                                min_value=0,
-                                max_value=100,),},
-                                width=320,
-                                disabled=True,
-                                hide_index=False)
+                       column_config={
+                           selected_month: st.column_config.ProgressColumn(
+                               "Water Level (%)",
+                               format="%f",
+                               width="medium",
+                               min_value=0,
+                               max_value=100),
+                       },
+                       width=320,
+                       disabled=True,
+                       hide_index=False)
     
     st.info(
     "Efficient water resource management requires a clear understanding of the water condition. "
@@ -223,27 +176,22 @@ def Combined(selected_month, dataset_2, dataset_3):
     "based on consumption rates, aiding in informed decisions on allocation and conservation.\n\n"
 )
 
-
 def display_supply_demand_ratio(selected_month, dataset):
-    
-    # Setup a Streamlit container for displaying the results.
     st.title('Water Supply/Demand Ratio')
-
-    # Use HTML and CSS for styling markdown content
     st.markdown(f"""
         <style>
             .info {{
                 font-size: 16px;
                 font-weight: bold;
-                color: #333333;  /* For clear readability */
-                background-color: #f9f9f9;  /* Soft neutral background */
+                color: #333333;
+                background-color: #f9f9f9;
                 padding: 10px;
-                border: 2px solid #2c3e50;  /* Contrasting dark border */
+                border: 2px solid #2c3e50;
                 border-radius: 10px;
-                box-shadow: 2px 2px 12px rgba(0,0,0,0.1);  /* Adds depth */
+                box-shadow: 2px 2px 12px rgba(0,0,0,0.1);
             }}
             .header {{
-                color: #d35400;  /* Emphasizing the month with a warm orange */
+                color: #d35400;
                 font-size: 16px;
                 margin-bottom: 0;
             }}
@@ -258,43 +206,34 @@ def display_supply_demand_ratio(selected_month, dataset):
     """, unsafe_allow_html=True)
     
     st.write("")
-
-    # Iterate through each row in the dataset to process and display the supply for each component.
     for index, row in dataset.iterrows():
         component = row['Component']
         supply_percentage = row[f'{selected_month} % of Max Demand']
         supply = row[selected_month]
-
-        # Display the component name, progress bar, and supply percentage.
         st.markdown(f"**{component}**")
         st.progress(supply_percentage / 100)
         st.caption(f"{supply:,.0f} L - {supply_percentage:.2f}% of highest recorded demand ({row['Risk Assessment']})")
-    st.write("---") 
-
-
+    st.write("---")
 
 def Leakage_Info_Function():
-    container = st.container(border=True)
-
+    container = st.container()
     with container:
         st.markdown("""
-    <h3 style="text-align: center;">
-        ⚠️Alert Warning⚠️
-    </h3>
-    """, unsafe_allow_html=True)
-        # Create a dictionary with the data
+        <h3 style="text-align: center;">
+            ⚠️Alert Warning⚠️
+        </h3>
+        """, unsafe_allow_html=True)
         Leakage_Data = pd.DataFrame(
-            {"Area": [["Area E"], ["Area W"],["Area N"],["Area S"]],
-            "Abnormalities": [["4/4"], ["2/4"],["0/4"],["0/4"]],
-            "Indicators": [
+            {"Area": [["Area E"], ["Area W"], ["Area N"], ["Area S"]],
+             "Abnormalities": [["4/4"], ["2/4"], ["0/4"], ["0/4"]],
+             "Indicators": [
                 ["🚨 Unusual Water Usage", "🚨 Acoustic Leak Detection", "🚨 Abnormal Water Temperature", "🚨 Abnormal Water Pressure"],
-                ["🚨 Abnormal Water Temperature", "🚨 Abnormal Water Pressure"],["All Good!"],["All Good!"]],})
+                ["🚨 Abnormal Water Temperature", "🚨 Abnormal Water Pressure"], ["All Good!"], ["All Good!"]],})
 
         st.data_editor(Leakage_Data, 
-                        column_config={"Leakage":st.column_config.ListColumn(
-                            "Abnormality",),},
-                            width=670,
-                            hide_index=True)    
+                       column_config={"Leakage": st.column_config.ListColumn("Abnormality",)},
+                       width=670,
+                       hide_index=True)
     
     with st.popover("4 Signs of Water Leakage", help=None, disabled=False, use_container_width=True):
         st.markdown("🚨 Unusual Water Usage : ***Keep an eye on unexpected increases or decreases in water consumption.***")
@@ -302,17 +241,16 @@ def Leakage_Info_Function():
         st.markdown("🚨 Abnormal Water Temperature : ***Look out for unusual changes in water temperature.***")
         st.markdown("🚨 Abnormal Water Pressure : ***Detect sudden and unexplained changes in water pressure.***")
 
-
-# Display the current year in an aesthetic way
+# Display the current year
 st.markdown("### 📅 Year: 2023")
 
-# Revised month selection with a more natural phrase
+# Month selection
 option = st.selectbox(
     "Select a Month to Display",
     ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
 )
 
-# Call the functions for visualization
+# Call functions for visualization
 if __name__ == "__main__":
     V_Metric_Data_Function(option, V_Metric_Data)
     Area_Map()
@@ -323,14 +261,9 @@ if __name__ == "__main__":
 # Title for the Forecasting section
 st.title("Monthly Water Watch")
 
-# Load the dataset
-data = pd.read_csv('water_data.csv')
-
-# Define the correct order of the months
+# Ensure the 'Month' column is a categorical type with a defined order
 month_order = ["January", "February", "March", "April", "May", "June", 
                "July", "August", "September", "October", "November", "December"]
-
-# Ensure the 'Month' column is a categorical type with a defined order
 data['Month'] = pd.Categorical(data['Month'], categories=month_order, ordered=True)
 
 # Calculate the monthly average water usage
@@ -346,13 +279,13 @@ selected_month_avg = monthly_avg[monthly_avg['Month'] == selected_month]['Avg_Us
 st.markdown(f"For {selected_month}, the historical average water usage is <span style='color: black; font-weight: bold;'>{selected_month_avg:,.0f} litres</span>.", unsafe_allow_html=True)
 
 # Provide recommendations based on the average
-if selected_month=="January":
+if selected_month == "January":
     st.success(f"🎉 Warning: Expect increased water consumption in {selected_month} due to the Chinese New Year Festival. Implement water-saving tactics and monitor usage closely to manage the surge.")
-elif selected_month=="April":
+elif selected_month == "April":
     st.success(f"🌙 Warning: Anticipate heightened water usage in {selected_month} for the Hari Raya Festival. Adopt proactive water-saving measures and keep a vigilant watch on consumption levels.")
-elif selected_month=="December":
+elif selected_month == "December":
     st.success(f"🎄 Warning: Prepare for elevated water usage during {selected_month} owing to the Christmas and holiday celebrations. Engage in strategic water conservation and maintain strict usage oversight.")
-elif selected_month=="November":
+elif selected_month == "November":
     st.success(f"🪔 Warning: Increased water usage likely in {selected_month} during the Deepavali festival. Prioritize implementing water conservation strategies and closely monitor water consumption.")
 elif selected_month_avg > 3000000:
     st.success(f"⚠️ Warning: High water usage expected in {selected_month}. Consider implementing water-saving strategies and closely monitoring usage.")

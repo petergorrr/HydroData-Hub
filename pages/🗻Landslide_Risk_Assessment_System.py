@@ -149,7 +149,6 @@ def map_risk_to_category(risk_score):
     else:
         return "High"
     
-# Function to determine color based on risk category
 def get_risk_color(risk_category):
     if risk_category == "Safe":
         return "#32CD32"  # LimeGreen
@@ -160,27 +159,19 @@ def get_risk_color(risk_category):
     else:
         return "#FF0000"  # Red
 
-# Set up the main title for the application
 st.title("Landslide Risk Assessment System ⚒️")
 
 # Sidebar setup
 with st.sidebar:
-    # Display an image with description
     st.image("images/landslide.jpg", use_column_width=True)
-    
-    # Information section about the app usage
     st.info(
         "This app uses a fuzzy logic system to assess landslide risk based on input parameters. "
         "Adjust the parameters and click 'Calculate Risk' to see the results on the map."
     )
-    
-    # Display legal and copyright information
     st.markdown("---")
     st.write("This application is for authorized use only.")
     st.markdown("Copyright © Make Water OK Malaysia")
     st.markdown("---")
-    
-    # Data sources and references section
     st.markdown("""
         <style>
             .data-sources {
@@ -210,21 +201,16 @@ with st.sidebar:
         </div>
     """, unsafe_allow_html=True)
 
-
 # Main form for landslide risk assessment
 with st.form("risk_assessment_form"):
-    # Header for the form
     st.header("Assessment of Location and Environmental Risk Factors")
 
-    # Assessment Date Entry
     col_date, _ = st.columns([1, 3])
     with col_date:
         assessment_date = st.date_input("Assessment Date")
 
-    # Split the form into two columns for different categories of inputs
     col1, col2 = st.columns(2)
 
-    # First column for location, slope, and human activity details
     with col1:
         latitude = st.number_input("Latitude Coordinate:", value=5.422500, format="%.6f")
         
@@ -272,7 +258,6 @@ with st.form("risk_assessment_form"):
                 height=120
             )
 
-    # Second column for longitude, soil conditions, rainfall, and structural features
     with col2:
         longitude = st.number_input("Longitude Coordinate:", value=100.271400, format="%.6f")
 
@@ -299,7 +284,7 @@ with st.form("risk_assessment_form"):
         presence_of_cracks = st.selectbox(
             "Are there any cracks visible?",
             options=['No Cracks Detected', 'Cracks Detected'],
-            index=0,  # Ensure the default selected option is 'No Cracks Detected'
+            index=0,
             help="Indicate if there are any visible cracks on the slope."
         )
 
@@ -317,19 +302,15 @@ with st.form("risk_assessment_form"):
         installed_gabion = st.checkbox("Gabion Walls")
         installed_rubble = st.checkbox("Rubble Masonry Walls")
 
-    # General input for historical landslide occurrences outside the columns
     historical_landslide_occurrences = st.radio(
         "Record of Previous Landslides in This Area:",
         options=["Yes", "No"], index=1,
         help="Information on past landslides can help evaluate the risk of recurrence."
     )
 
-    # Submit button for the form
     submit_button = st.form_submit_button("Calculate Risk")
 
-# Check if the submit button was pressed
 if submit_button:
-    # Mapping user inputs to numerical values for fuzzy logic input
     human_activity_levels = {'Absent': 0, 'Present': 100}
     vegetation_coverage_levels = {
         '0-10%': 5, '11-20%': 15, '21-30%': 25,
@@ -348,7 +329,6 @@ if submit_button:
     }
     soil_types = {'Clay': 0, 'Sand': 1, 'Loam': 2, 'Peat': 3, 'Chalk': 4, 'Silt': 5}
 
-    # Helper function to convert slope steepness selection to a numerical value
     def convert_slope_steepness_to_numerical(slope_steepness_category):
         slope_steepness_mapping = {
             '0-4.9 (Very Gentle)': 5,
@@ -361,7 +341,6 @@ if submit_button:
         }
         return slope_steepness_mapping[slope_steepness_category]
 
-    # Collect inputs for the fuzzy logic risk calculation
     inputs = {
         'rainfall': expected_rainfall,
         'soil_moisture': level_of_soil_moisture,
@@ -372,23 +351,13 @@ if submit_button:
         'drainage_system': drainage_conditions[drainage_system_condition],
         'vegetated_surface': vegetation_coverage_levels[coverage_of_vegetation],
         'slope_nature': slope_nature_levels[slope_nature]
-        
-        # Each stabilization measure is checked if installed and given a corresponding numerical value
-        # 'soil_nailing': slope_stabilization_measures['Soil Nails'] if installed_soil_nail else 0,
-        # 'slope_netting': slope_stabilization_measures['Erosion Control Netting'] if installed_netting else 0,
-        # 'gabion_wall': slope_stabilization_measures['Gabion Walls'] if installed_gabion else 0,
-        # 'rubble_wall': slope_stabilization_measures['Rubble Masonry Walls'] if installed_rubble else 0,
     }
 
-    # Execute fuzzy logic system
     fuzzy_system = create_fuzzy_system()
     risk_score = calculate_landslide_risk(fuzzy_system, inputs)
     risk_category = map_risk_to_category(risk_score)
-
-    # Determine the color based on the risk category
     risk_color = get_risk_color(risk_category)
 
-    # Display the risk score and category with dynamic color
     st.markdown(f"""
     <div style='background-color:#f0f2f6; padding:20px; border-radius:12px; border: 4px solid {risk_color}; margin-bottom: 20px; text-align:center;'>
         <h2 style='color:{risk_color}; font-size: 24px; font-family: Arial, sans-serif;'>
@@ -397,10 +366,8 @@ if submit_button:
     </div>
     """, unsafe_allow_html=True)
 
-    # Spacer for layout
     st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
     
-    # Create a dataframe for mapping
     map_data = pd.DataFrame({
         'lat': [latitude],
         'lon': [longitude],
@@ -408,7 +375,6 @@ if submit_button:
         'risk_category': [risk_category]
     })
 
-    # Configure the view state for the map
     view_state = pdk.ViewState(
         latitude=latitude,
         longitude=longitude,
@@ -416,62 +382,39 @@ if submit_button:
         pitch=50,
     )
 
-    # Define the map layer
     risk_layer = pdk.Layer(
         "ScatterplotLayer",
         data=map_data,
         get_position='[lon, lat]',
         get_color='[200, 30, 0, 160]' if risk_category == 'High' else '[30, 200, 0, 160]',
-        get_radius=100,  # Radius in meters
+        get_radius=100,
     )
 
-    # Title for the map
     st.title("GIS Mapping for Landslide Risk Assessment 🗺️")
     
-    # Render the map with PyDeck
     st.pydeck_chart(pdk.Deck(
         map_style='mapbox://styles/mapbox/light-v9',
         initial_view_state=view_state,
         layers=[risk_layer],
     ))
     
-# Title for the image upload section
 st.title("Upload an Image For Visual Inspection 📸")
 
-# File uploader widget
 uploaded_file = st.file_uploader("Choose an image...", type=['jpg', 'jpeg', 'png'])
 
-# Check if a file has been uploaded
 if uploaded_file is not None:
-    # Read the file and convert to a numpy array
     bytes_data = uploaded_file.getvalue()
     image_np = np.array(Image.open(io.BytesIO(bytes_data)))
-
-    # Process the image and annotate it
     annotated_image_np = detect_and_annotate(image_np)
-
-    # Convert numpy array back to PIL Image for display
     annotated_image = Image.fromarray(annotated_image_np.astype('uint8'), 'RGB')
-
-    # Display the processed image
     st.image(annotated_image, caption='Processed Image with Annotation', use_column_width=True)
-
-    # Notification of report generation
     st.success("A Landslide Risk Analysis Report is generated.")
     
-    # Expandable section for the risk analysis report
     with st.expander("View Landslide Risk Analysis Report 📄", expanded=False):
-        # Static risk analysis function generates formatted text
-        # Note: static_risk_analysis is a placeholder for actual report generation function
         risk_analysis_text = static_risk_analysis()
         st.markdown(risk_analysis_text, unsafe_allow_html=True)
-
-        # Spacer for layout
         st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
-
-        # Button for downloading the report
-        download_button_text = "Download Report"
-        st.download_button(label=download_button_text, 
+        st.download_button(label="Download Report", 
                            data=risk_analysis_text,
                            file_name="Landslide_Risk_Analysis_Report.txt",
                            mime="text/plain")
